@@ -1,0 +1,17 @@
+{
+  "_note": "Synthetic example (NOTICE §1). Copy to <your-estate>/mcp/servers.json. Names only for secrets: secretEnv lists env var NAMES, never values. uika 0.1.0 does not bundle the `uika mcp render` plane (see docs/roadmap.md); this file documents the registry law so estates can start compliant.",
+  "servers": {
+    "playwright": {
+      "transport": "stdio",
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"],
+      "harnesses": ["opencode", "claude-code"]
+    },
+    "github": {
+      "transport": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "secretEnv": "GITHUB_MCP_TOKEN",
+      "harnesses": ["claude-code", "codex"]
+    }
+  }
+}

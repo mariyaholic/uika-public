@@ -1,0 +1,83 @@
+{
+  "_note": "mono — grayscale theme for laser print, redaction-safe drafts, and faxable one-pagers.",
+  "color": {
+    "$type": "color",
+    "bg-ground": {
+      "$value": "#ffffff"
+    },
+    "bg-panel": {
+      "$value": "#f2f2f2"
+    },
+    "bg-panel-2": {
+      "$value": "#e6e6e6"
+    },
+    "line": {
+      "$value": "#cccccc"
+    },
+    "line-strong": {
+      "$value": "#8c8c8c"
+    },
+    "gold": {
+      "$value": "#3a3a3a"
+    },
+    "gold-bright": {
+      "$value": "#1a1a1a"
+    },
+    "gold-dim": {
+      "$value": "#6e6e6e"
+    },
+    "lavender": {
+      "$value": "#555555"
+    },
+    "marigold": {
+      "$value": "#444444"
+    },
+    "lining": {
+      "$value": "#222222"
+    },
+    "sage": {
+      "$value": "#5a5a5a"
+    },
+    "wine": {
+      "$value": "#2e2e2e"
+    },
+    "text": {
+      "$value": "#1e1e1e"
+    },
+    "text-bright": {
+      "$value": "#000000"
+    },
+    "muted": {
+      "$value": "#5a5a5a"
+    },
+    "slate": {
+      "$value": "#8a8a8a"
+    }
+  },
+  "fontFamily": {
+    "$type": "fontFamily",
+    "font-display": {
+      "$value": "Georgia, serif"
+    },
+    "font-brand": {
+      "$value": "'Segoe UI', sans-serif"
+    },
+    "font-mono": {
+      "$value": "Consolas, monospace"
+    }
+  },
+  "fonts": {
+    "display": {
+      "family": "Georgia, serif",
+      "system": true
+    },
+    "brand": {
+      "family": "'Segoe UI', sans-serif",
+      "system": true
+    },
+    "mono": {
+      "family": "Consolas, monospace",
+      "system": true
+    }
+  }
+}

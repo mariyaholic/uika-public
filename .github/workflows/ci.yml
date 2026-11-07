@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Node 22 on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Privacy scrub (source tree and packed tarball)
+        run: npm run scrub
+      - name: Run tests (includes isolated packed-tarball install smoke)
+        run: npm test
+      - name: Strict lint
+        run: node bin/uika.mjs lint --strict
+      - name: Strict documentation check
+        run: node bin/uika.mjs docs check --strict
+      - name: Verify package contents
+        run: npm pack --dry-run --json

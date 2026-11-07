@@ -1,0 +1,11 @@
+{
+  "_note": "Synthetic example (NOTICE §1). Copy to <your-estate>/projects/registry.json. Shape expected by `uika find` / `uika where`: a name -> entry OBJECT MAP; paths must exist for find to scan them; aliases are fuzzy-match keys (>=4 chars).",
+  "projects": {
+    "demo": {
+      "paths": ["C:/code/demo"],
+      "aliases": ["d"],
+      "default": true,
+      "note": "replace with a real absolute path before using `uika find`"
+    }
+  }
+}

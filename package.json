@@ -1,0 +1,62 @@
+{
+  "name": "uika",
+  "version": "0.1.0",
+  "description": "A personal estate layer for AI coding agents - one lawbook, generated adapters, measured sessions.",
+  "type": "module",
+  "license": "MIT",
+  "author": "mariyaholic",
+  "bin": {
+    "uika": "bin/uika.mjs"
+  },
+  "exports": {
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "bin/uika.mjs",
+    "src/*.mjs",
+    "!src/*.test.mjs",
+    "src/validate-codes.json",
+    "templates/",
+    "schema/",
+    "examples/",
+    "docs/",
+    "skills/",
+    "NOTICE",
+    "ROADMAP.md",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "CONTRIBUTING.md"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "uika": "node bin/uika.mjs",
+    "check": "node bin/uika.mjs check",
+    "lint": "node bin/uika.mjs lint",
+    "init": "node bin/uika.mjs init",
+    "scrub": "node tools/scrub_privacy.mjs"
+  },
+  "keywords": [
+    "ai-agents",
+    "agents-md",
+    "agent-skills",
+    "claude",
+    "codex",
+    "opencode",
+    "cline",
+    "gemini",
+    "estate",
+    "lawbook",
+    "developer-tools"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mariyaholic/uika-public.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mariyaholic/uika-public/issues"
+  },
+  "homepage": "https://github.com/mariyaholic/uika-public#readme"
+}

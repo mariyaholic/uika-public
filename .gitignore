@@ -1,0 +1,23 @@
+# dependencies and build output
+node_modules/
+dist/
+coverage/
+.nyc_output/
+
+# packed tarballs (npm pack, scrub)
+*.tgz
+
+# machine-local estate state written by `uika deploy` and `uika init --apply`
+data/deploy/
+
+# scratch and generated output
+scratch/
+artifacts/
+tmp/
+*.log
+
+# editor and OS noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

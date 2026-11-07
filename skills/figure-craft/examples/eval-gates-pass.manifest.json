@@ -1,0 +1,28 @@
+{
+  "schema": "uika.figure-manifest.v1",
+  "id": "eval-gates-pass",
+  "form": "bar",
+  "title": "Estate eval gates",
+  "source": "labs/eval/README.md",
+  "source_sha256": "797346cde3fb091d168c6e0214585c6c9fecfb98b9f91a7e7f2ee5a2b99190ce",
+  "tokens_sha256": "889785a344af97927a7559dadcf08a985577c35a4bceaf291a11669e671412ec",
+  "figure_sha256": "3a821616f25d836b41939b75b147abdb7ad763f05f1c0446e31bcfd72f73a6a4",
+  "rows": [
+    {
+      "gate": "declared",
+      "n": 23
+    },
+    {
+      "gate": "validated",
+      "n": 23
+    },
+    {
+      "gate": "promoted",
+      "n": 0
+    }
+  ],
+  "interpretation": {
+    "provenance": "labs/eval/README.md — forest declared and validated 2026-09-30",
+    "interpretation": "promoted stays 0 until the eval-runner exists (WORKSTACK: eval-runner)"
+  }
+}

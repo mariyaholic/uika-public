@@ -1,0 +1,51 @@
+{
+  "$schema": "./schema/estate.schema.json",
+  "_note": "Synthetic example estate (NOTICE §1). Copy to <your-estate>/estate.json and edit. The tool reads this manifest; every unknown field is ignored, so extend freely.",
+  "estate": {
+    "name": "example",
+    "root": ".",
+    "roles": ["solo"],
+    "posture": {
+      "mode": "near-autopilot",
+      "secrets": "local-egress-locked",
+      "selfEditLock": "full",
+      "gitGating": "free-except-main",
+      "enforcement": "advisory-first",
+      "subagentTurnBudget": 15,
+      "parallelism": "read-only-fanout + serial-implementation",
+      "implementationIsolation": "primary-session, worktree-optional",
+      "delegation": "brief-template + effort-rules",
+      "subagentRoster": "per-repo"
+    },
+    "harnesses": [
+      { "id": "claude-code", "tier": "verified", "configHome": "~/.claude", "instructions": "CLAUDE.md imports AGENTS.md; .claude/rules/*.md path-scoped" },
+      { "id": "codex", "tier": "verified", "configHome": "~/.codex", "instructions": "AGENTS.md chain; 32KiB project_doc cap", "notes": "AGENTS.override.md beats AGENTS.md per directory" },
+      { "id": "opencode", "tier": "verified", "configHome": "~/.config/opencode", "instructions": "AGENTS.md + opencode.json:instructions[]" }
+    ],
+    "sessionProtocol": {
+      "freshness": "mtime-first",
+      "freshnessFallback": "git-status + WORKSTACK.md when mtime trail is ambiguous",
+      "workstack": "WORKSTACK.md at every managed repo root"
+    },
+    "budgets": { "alwaysLoadedFileLines": 200, "codexProjectDocBytes": 32768, "enforcement": "warn" },
+    "distribution": {
+      "mode": "sync-script",
+      "adapterForm": "imports-and-copies, no symlinks",
+      "targets": [],
+      "onboarding": "lazy"
+    },
+    "roster": {
+      "handleShape": "<harness>.<role>",
+      "harnesses": ["claude", "codex", "opencode"],
+      "roles": ["tower", "scout", "impl", "review", "judge"]
+    },
+    "skills": {
+      "library": "skills/",
+      "homes": ["~/.claude/skills", "~/.codex/skills", "~/.agents/skills", "~/.config/opencode/skills"]
+    },
+    "projects": { "registry": "projects/registry.json" },
+    "mcp": { "registry": "mcp/servers.json", "applyMode": "render-only" },
+    "providers": { "registry": "providers/registry.json", "keys": "env-var-names-only; values live in user environment" },
+    "register": { "adrs": "register/adr/", "learnings": "register/LEARNINGS.md", "flow": "ADR-first; code follows decision" }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "schema": "uika.explainer-evidence.v1",
+  "_note": "Every figure a scene shows or says. Copy beside the scene script and fill from ONE source file.",
+  "source": "replace/with/one/source.md",
+  "figures": {
+    "population": { "v": "8.1", "src": "report.md §2 table 1 (billions, 2024)" },
+    "growth": { "v": "1.1", "src": "report.md §2 table 1 (percent, annual)" }
+  },
+  "disclosure": "Figures from report.md §2; no derived values are shown."
+}

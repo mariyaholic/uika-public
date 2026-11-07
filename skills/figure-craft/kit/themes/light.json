@@ -1,0 +1,83 @@
+{
+  "_note": "light — the canon light face (ADR-0011). Token swap only; the same spec looks consistent in every repo.",
+  "color": {
+    "$type": "color",
+    "bg-ground": {
+      "$value": "#f7f3ea"
+    },
+    "bg-panel": {
+      "$value": "#fffdf8"
+    },
+    "bg-panel-2": {
+      "$value": "#f6f1e6"
+    },
+    "line": {
+      "$value": "#d9cfae"
+    },
+    "line-strong": {
+      "$value": "#c2b184"
+    },
+    "gold": {
+      "$value": "#a37f2e"
+    },
+    "gold-bright": {
+      "$value": "#8a6a20"
+    },
+    "gold-dim": {
+      "$value": "#bfa467"
+    },
+    "lavender": {
+      "$value": "#6f5faa"
+    },
+    "marigold": {
+      "$value": "#c4712a"
+    },
+    "lining": {
+      "$value": "#9c3f47"
+    },
+    "sage": {
+      "$value": "#48785e"
+    },
+    "wine": {
+      "$value": "#6b2a3d"
+    },
+    "text": {
+      "$value": "#37302a"
+    },
+    "text-bright": {
+      "$value": "#241f18"
+    },
+    "muted": {
+      "$value": "#6f665b"
+    },
+    "slate": {
+      "$value": "#8b8275"
+    }
+  },
+  "fontFamily": {
+    "$type": "fontFamily",
+    "font-display": {
+      "$value": "'Cinzel', serif"
+    },
+    "font-brand": {
+      "$value": "'Outfit', sans-serif"
+    },
+    "font-mono": {
+      "$value": "'JetBrains Mono', monospace"
+    }
+  },
+  "fonts": {
+    "display": {
+      "family": "'Cinzel', serif",
+      "system": true
+    },
+    "brand": {
+      "family": "'Outfit', sans-serif",
+      "system": true
+    },
+    "mono": {
+      "family": "'JetBrains Mono', monospace",
+      "system": true
+    }
+  }
+}

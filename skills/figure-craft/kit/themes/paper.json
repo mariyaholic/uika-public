@@ -1,0 +1,83 @@
+{
+  "_note": "paper — light theme for print/PDF figures. Token swap only (ADR-0034 §5); forms never hard-code a palette.",
+  "color": {
+    "$type": "color",
+    "bg-ground": {
+      "$value": "#ffffff"
+    },
+    "bg-panel": {
+      "$value": "#f6f6f4"
+    },
+    "bg-panel-2": {
+      "$value": "#ededea"
+    },
+    "line": {
+      "$value": "#d9d9d2"
+    },
+    "line-strong": {
+      "$value": "#b8b8ad"
+    },
+    "gold": {
+      "$value": "#8a6a20"
+    },
+    "gold-bright": {
+      "$value": "#6f5518"
+    },
+    "gold-dim": {
+      "$value": "#b8a06a"
+    },
+    "lavender": {
+      "$value": "#5a4f8a"
+    },
+    "marigold": {
+      "$value": "#b25a1e"
+    },
+    "lining": {
+      "$value": "#a2434d"
+    },
+    "sage": {
+      "$value": "#3f7a55"
+    },
+    "wine": {
+      "$value": "#7a2340"
+    },
+    "text": {
+      "$value": "#22211e"
+    },
+    "text-bright": {
+      "$value": "#111110"
+    },
+    "muted": {
+      "$value": "#5f5d57"
+    },
+    "slate": {
+      "$value": "#8b887f"
+    }
+  },
+  "fontFamily": {
+    "$type": "fontFamily",
+    "font-display": {
+      "$value": "Georgia, serif"
+    },
+    "font-brand": {
+      "$value": "'Segoe UI', sans-serif"
+    },
+    "font-mono": {
+      "$value": "Consolas, monospace"
+    }
+  },
+  "fonts": {
+    "display": {
+      "family": "Georgia, serif",
+      "system": true
+    },
+    "brand": {
+      "family": "'Segoe UI', sans-serif",
+      "system": true
+    },
+    "mono": {
+      "family": "Consolas, monospace",
+      "system": true
+    }
+  }
+}

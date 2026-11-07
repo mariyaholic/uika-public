@@ -1,0 +1,83 @@
+{
+  "_note": "broadsheet — light high-contrast editorial. Oxblood (from the --lining token) replaces gold as the dominant mark; installed serif/sans/mono faces.",
+  "color": {
+    "$type": "color",
+    "bg-ground": {
+      "$value": "#fbfaf6"
+    },
+    "bg-panel": {
+      "$value": "#ffffff"
+    },
+    "bg-panel-2": {
+      "$value": "#f3f1ea"
+    },
+    "line": {
+      "$value": "#d8d3c6"
+    },
+    "line-strong": {
+      "$value": "#b3ab98"
+    },
+    "gold": {
+      "$value": "#8c2f3d"
+    },
+    "gold-bright": {
+      "$value": "#6f2029"
+    },
+    "gold-dim": {
+      "$value": "#c6a0a5"
+    },
+    "lavender": {
+      "$value": "#4a5a7a"
+    },
+    "marigold": {
+      "$value": "#b25a1e"
+    },
+    "lining": {
+      "$value": "#a2434d"
+    },
+    "sage": {
+      "$value": "#3f7a55"
+    },
+    "wine": {
+      "$value": "#7a2340"
+    },
+    "text": {
+      "$value": "#1b1a17"
+    },
+    "text-bright": {
+      "$value": "#000000"
+    },
+    "muted": {
+      "$value": "#5c594f"
+    },
+    "slate": {
+      "$value": "#8a8578"
+    }
+  },
+  "fontFamily": {
+    "$type": "fontFamily",
+    "font-display": {
+      "$value": "Georgia, 'Times New Roman', serif"
+    },
+    "font-brand": {
+      "$value": "'Segoe UI', system-ui, sans-serif"
+    },
+    "font-mono": {
+      "$value": "Consolas, monospace"
+    }
+  },
+  "fonts": {
+    "display": {
+      "family": "Georgia, 'Times New Roman', serif",
+      "system": true
+    },
+    "brand": {
+      "family": "'Segoe UI', system-ui, sans-serif",
+      "system": true
+    },
+    "mono": {
+      "family": "Consolas, monospace",
+      "system": true
+    }
+  }
+}

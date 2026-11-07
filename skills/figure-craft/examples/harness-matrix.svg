@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" width="960" height="600" role="img">
+<rect x="0" y="0" width="960" height="600" fill="#ffffff"/>
+<text x="28" y="32" font-family="'Segoe UI', sans-serif" font-size="22" font-weight="600" text-anchor="start" fill="#111110">Harness capability coverage</text>
+<text x="28" y="588" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="start" fill="#5f5d57">1 = wired, 0 = not; source labs/harness-matrix</text>
+<rect x="96.96" y="58" width="206.76" height="117" fill="#8a6a20" opacity="1"/>
+<text x="200.34" y="121.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#111110">1</text>
+<rect x="303.72" y="58" width="206.76" height="117" fill="#8a6a20" opacity="1"/>
+<text x="407.1" y="121.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#111110">1</text>
+<rect x="510.48" y="58" width="206.76" height="117" fill="#8a6a20" opacity="1"/>
+<text x="613.86" y="121.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#111110">1</text>
+<rect x="717.24" y="58" width="206.76" height="117" fill="#8a6a20" opacity="1"/>
+<text x="820.62" y="121.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#111110">1</text>
+<rect x="96.96" y="175" width="206.76" height="117" fill="#8a6a20" opacity="1"/>
+<text x="200.34" y="238.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#111110">1</text>
+<rect x="303.72" y="175" width="206.76" height="117" fill="#8a6a20" opacity="1"/>
+<text x="407.1" y="238.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#111110">1</text>
+<rect x="510.48" y="175" width="206.76" height="117" fill="#8a6a20" opacity="1"/>
+<text x="613.86" y="238.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#111110">1</text>
+<rect x="717.24" y="175" width="206.76" height="117" fill="#8a6a20" opacity="1"/>
+<text x="820.62" y="238.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#111110">1</text>
+<rect x="96.96" y="292" width="206.76" height="117" fill="#8a6a20" opacity="1"/>
+<text x="200.34" y="355.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#111110">1</text>
+<rect x="303.72" y="292" width="206.76" height="117" fill="#8a6a20" opacity="1"/>
+<text x="407.1" y="355.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#111110">1</text>
+<rect x="510.48" y="292" width="206.76" height="117" fill="#8a6a20" opacity="0.15"/>
+<text x="613.86" y="355.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#111110">0</text>
+<rect x="717.24" y="292" width="206.76" height="117" fill="#8a6a20" opacity="1"/>
+<text x="820.62" y="355.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#111110">1</text>
+<rect x="96.96" y="409" width="206.76" height="117" fill="#8a6a20" opacity="1"/>
+<text x="200.34" y="472.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#111110">1</text>
+<rect x="303.72" y="409" width="206.76" height="117" fill="#8a6a20" opacity="1"/>
+<text x="407.1" y="472.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#111110">1</text>
+<rect x="510.48" y="409" width="206.76" height="117" fill="#8a6a20" opacity="1"/>
+<text x="613.86" y="472.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#111110">1</text>
+<rect x="717.24" y="409" width="206.76" height="117" fill="#8a6a20" opacity="1"/>
+<text x="820.62" y="472.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#111110">1</text>
+<text x="86.96" y="120.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="end" fill="#22211e">skills</text>
+<text x="86.96" y="237.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="end" fill="#22211e">mcp</text>
+<text x="86.96" y="354.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="end" fill="#22211e">hooks</text>
+<text x="86.96" y="471.5" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="end" fill="#22211e">migrate</text>
+<text x="200.34" y="546" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#22211e">claude</text>
+<text x="407.1" y="546" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#22211e">codex</text>
+<text x="613.86" y="546" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#22211e">opencode</text>
+<text x="820.62" y="546" font-family="'Segoe UI', sans-serif" font-size="13" text-anchor="middle" fill="#22211e">commandcode</text>
+</svg>

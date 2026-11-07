@@ -1,0 +1,86 @@
+{
+  "_note": "lain — Serial Experiments Lain. CRT monochrome + signal red on a near-black ground, bound to the estate's MS Gothic faces (the same bitmap gothic skills/retro-pixel uses; msgothic.ttc index 0 = MS Gothic mono, index 1 = MS PGothic). Type binds by installed name, never a silent substitute.",
+  "color": {
+    "$type": "color",
+    "bg-ground": {
+      "$value": "#08090b"
+    },
+    "bg-panel": {
+      "$value": "#101317"
+    },
+    "bg-panel-2": {
+      "$value": "#171b20"
+    },
+    "line": {
+      "$value": "#20262c"
+    },
+    "line-strong": {
+      "$value": "#333c44"
+    },
+    "gold": {
+      "$value": "#e6e6df"
+    },
+    "gold-bright": {
+      "$value": "#ffffff"
+    },
+    "gold-dim": {
+      "$value": "#7d837c"
+    },
+    "lavender": {
+      "$value": "#8fa0c0"
+    },
+    "marigold": {
+      "$value": "#c9a227"
+    },
+    "lining": {
+      "$value": "#b3342f"
+    },
+    "sage": {
+      "$value": "#6e9c7e"
+    },
+    "wine": {
+      "$value": "#7a2340"
+    },
+    "text": {
+      "$value": "#c3c9c4"
+    },
+    "text-bright": {
+      "$value": "#eef1ee"
+    },
+    "muted": {
+      "$value": "#7e8781"
+    },
+    "slate": {
+      "$value": "#59615c"
+    }
+  },
+  "fontFamily": {
+    "$type": "fontFamily",
+    "font-display": {
+      "$value": "'MS PGothic', sans-serif"
+    },
+    "font-brand": {
+      "$value": "'MS PGothic', sans-serif"
+    },
+    "font-mono": {
+      "$value": "'MS Gothic', monospace"
+    }
+  },
+  "fonts": {
+    "display": {
+      "family": "'MS PGothic', sans-serif",
+      "system": true,
+      "src": "C:/Windows/Fonts/msgothic.ttc#1"
+    },
+    "brand": {
+      "family": "'MS PGothic', sans-serif",
+      "system": true,
+      "src": "C:/Windows/Fonts/msgothic.ttc#1"
+    },
+    "mono": {
+      "family": "'MS Gothic', monospace",
+      "system": true,
+      "src": "C:/Windows/Fonts/msgothic.ttc#0"
+    }
+  }
+}

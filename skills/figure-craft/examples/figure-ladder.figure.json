@@ -1,0 +1,17 @@
+{
+  "id": "figure-ladder",
+  "title": "From brief to artifact",
+  "caption": "the four rungs, lowest that carries the meaning",
+  "form": "flow",
+  "data": {
+    "nodes": [
+      { "id": "brief", "label": "Brief", "layer": 0 },
+      { "id": "prose", "label": "Prose", "layer": 1 },
+      { "id": "diagram", "label": "Diagram", "layer": 2 },
+      { "id": "page", "label": "Page", "layer": 3 },
+      { "id": "video", "label": "Video", "layer": 4 }
+    ],
+    "edges": [["brief", "prose"], ["prose", "diagram"], ["diagram", "page"], ["page", "video"]]
+  },
+  "notes": { "provenance": "ADR-0034 — the figure engine and the output ladder" }
+}

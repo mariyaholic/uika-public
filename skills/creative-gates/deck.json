@@ -1,0 +1,51 @@
+{
+  "_note": "Creative constraint deck (ADR-0026). Drawn with `uika creative deck`. Weaker models collapse to the modal answer when asked to 'be creative'; divergence has to be injected from outside the model. Add cards freely; keep each card concrete (a noun you can draw, a rule you can check). Owner's picks (uika creative pick) tell you which cards earn their place.",
+  "world": [
+    { "id": "ships-log", "text": "A ship's log kept in ink: dated entries, dead reckoning, a barometer, a course line that corrects itself. Motion verb: 'steer'." },
+    { "id": "lighthouse", "text": "A lighthouse keeper's instrument room: brass dials, a rotating beam that reveals things only when it sweeps past them. Motion verb: 'sweep'." },
+    { "id": "timetable", "text": "A railway timetable and departure board: rows that flip, one train that is never late, platforms as categories. Motion verb: 'depart'." },
+    { "id": "seismograph", "text": "A seismograph drum: a continuous paper roll, one needle, quiet stretches that make the spike meaningful. Motion verb: 'trace'." },
+    { "id": "card-catalog", "text": "A library card catalog: drawers, index cards, a hand-stamped due date, one card pulled out and turned over. Motion verb: 'file'." },
+    { "id": "stage-cue", "text": "A stage manager's cue sheet: 'standby / go' calls, a dark stage lit one pool at a time, actors as data points. Motion verb: 'cue'." },
+    { "id": "darkroom", "text": "A photographic darkroom: an image surfacing in developer, red safelight, a print pegged to dry. Motion verb: 'develop'." },
+    { "id": "cartographer", "text": "A cartographer's survey: benchmarks, triangulation lines, a blank region marked 'unsurveyed' that stays blank on purpose. Motion verb: 'survey'." },
+    { "id": "tide-table", "text": "A tide table and a harbor wall: a level that rises and falls on a schedule, a mark for the highest recorded water. Motion verb: 'rise and fall'." },
+    { "id": "apothecary", "text": "An apothecary's drawers: labeled jars, exact weights on a balance, a warning label taken seriously. Motion verb: 'weigh'." },
+    { "id": "orchestra-tuning", "text": "An orchestra tuning up: many uncoordinated voices settle to one reference pitch; the conductor's raised hand is the cut. Motion verb: 'tune'." },
+    { "id": "telegraph", "text": "A telegraph office: paper tape, clicking keys, a message arriving letter by letter, a stamp at the end. Motion verb: 'transmit'." },
+    { "id": "clockmaker", "text": "A clockmaker's bench: gear trains, an escapement, one part shown to be the reason the rest keeps time. Motion verb: 'wind'." },
+    { "id": "field-notebook", "text": "A naturalist's field notebook: pencil sketches with labels, pressed specimens, a margin note that contradicts the entry. Motion verb: 'observe'." }
+  ],
+  "constraint": [
+    { "id": "one-take", "text": "One continuous camera move from first frame to last, no cuts; scenes hand off inside the move." },
+    { "id": "number-last", "text": "The headline number is the very last thing to appear; everything before it builds the question it answers." },
+    { "id": "failure-first", "text": "Show the failure, the caveat or the negative result before any success; let it set the stakes." },
+    { "id": "four-word-cap", "text": "No on-screen phrase longer than four words except a sourced figure and its source line." },
+    { "id": "one-object", "text": "A single object transforms through every beat instead of a new graphic per beat." },
+    { "id": "color-changes-meaning", "text": "One color means one thing, and changes meaning exactly once, at the turning point." },
+    { "id": "silence-then-hit", "text": "Two beats of near silence; the loudest sound in the piece lands on the claim, not on the title." },
+    { "id": "empty-frame", "text": "Every beat ends on a deliberately empty frame (12 frames) before the next begins; no cross-fades." },
+    { "id": "predict-reveal", "text": "Show the shape of the data first, unlabeled, and let the viewer predict; then reveal the label." },
+    { "id": "no-chrome-open", "text": "The first five seconds contain no UI chrome, no title bar and no logo: only the subject." },
+    { "id": "asymmetry-once", "text": "Composition is off-center by rule; symmetry is allowed exactly once, for the end card." },
+    { "id": "sound-leads", "text": "Sound leads picture by about ten frames on every cut, so the ear announces each change." }
+  ],
+  "signature": [
+    { "id": "mechanism-not-metric", "text": "Derive one beat from the MECHANISM (how it works), not from its metrics. If the beat would still make sense for a different subject, discard it." },
+    { "id": "rule-as-machine", "text": "Draw the rule as a physical machine that runs once, in view, end to end." },
+    { "id": "caveat-loudest", "text": "Make the caveat the most designed beat in the piece, not a footnote." },
+    { "id": "one-real-trace", "text": "Show one real trace (a request, a tick, a run) played back at human speed, with its source on screen." },
+    { "id": "ask-the-doubt", "text": "Open a beat with the strongest objection a skeptic would raise, then answer it with evidence." },
+    { "id": "before-after-same-frame", "text": "Answer with a before and after inside the same frame, so the change is the graphic." }
+  ],
+  "forbid": [
+    { "id": "orbit-primitive", "text": "An orbiting camera around a torus, sphere, icosahedron or wireframe crystal as the centerpiece." },
+    { "id": "glow-on-black", "text": "Glowing teal, cyan or amber on near-black as the whole identity." },
+    { "id": "three-stat-cards", "text": "A row of three identical stat cards." },
+    { "id": "titlebar-card", "text": "A window with a title bar and centered text as the main visual of a beat." },
+    { "id": "countup-climax", "text": "A count-up number on a dark panel as the climax." },
+    { "id": "fade-hold-fade", "text": "The same fade-in, hold, fade-out shape on every beat." },
+    { "id": "centered-title-stack", "text": "Centered title, subtitle and rule as the opener." },
+    { "id": "ai-geometry", "text": "Stock 'AI' imagery: brains, particles, network graphs, floating cubes." }
+  ]
+}

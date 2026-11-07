@@ -1,0 +1,4 @@
+{
+  "_note": "Dev-estate project registry (empty by design). Shape: name -> {paths[], aliases[], default?, note?}; paths must exist for `uika find` to scan them. Copy examples/projects.example.json and edit for your own estate.",
+  "projects": {}
+}

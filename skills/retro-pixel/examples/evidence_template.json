@@ -1,0 +1,10 @@
+{
+ "_note": "Evidence table: every figure on screen or in a voice line comes from here. Keys are ids used with EV.fig(id). 'v' is the exact text shown; 'src' names the source (file + section). Digits on screen that are not in some 'v' (or _extra_tokens) raise GuardError. Replace these demo rows with your fact sheet.",
+ "_extra_tokens": {"v": "2026 100", "src": "years and axis labels allowed on screen"},
+ "demo.pf": {"v": "1.84", "src": "DEMO ONLY: replace with FACT_SHEET section"},
+ "demo.n": {"v": "312", "src": "DEMO ONLY"},
+ "demo.dd": {"v": "2.4%", "src": "DEMO ONLY"},
+ "demo.rejected": {"v": "7", "src": "DEMO ONLY"},
+ "demo.formula": {"v": "(bal/10000)^0.5", "src": "DEMO ONLY"},
+ "disc.demo": {"v": "Demonstration only. These figures are placeholders used to show the pipeline; they describe no real system. Past performance does not guarantee future results.", "src": "template disclosure"}
+}

@@ -1,0 +1,7 @@
+# Pin LF in the repository and in checkouts on every platform. Law blocks are fingerprinted,
+# so a CRLF conversion on checkout would make a clean tree look edited.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.tgz binary
+*.zip binary

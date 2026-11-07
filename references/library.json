@@ -1,0 +1,49 @@
+{
+  "_note": "Starter reference-library registry (synthetic; NOTICE \u00a71). Schema: uika.reference-library.v1. Entries marked 'planned' are not collected yet. Payloads NEVER live in this repository: root points at a local store you own, entries carry provenance and rights notes only.",
+  "schema": "uika.reference-library.v1",
+  "root": "./references/store",
+  "entries": [
+    {
+      "id": "theme-pack-example",
+      "kind": "themes",
+      "title": "Example theme pack (planned)",
+      "status": "planned",
+      "rights": "study-only; never redistribute payloads"
+    },
+    {
+      "id": "video-set-example",
+      "kind": "video",
+      "title": "Example study video set (planned)",
+      "status": "planned",
+      "rights": "study-only; never redistribute payloads"
+    },
+    {
+      "id": "picture-set-example",
+      "kind": "pictures",
+      "title": "Example picture set (planned)",
+      "status": "planned",
+      "rights": "study-only; never redistribute payloads"
+    },
+    {
+      "id": "ui-reference-example",
+      "kind": "pictures",
+      "title": "Example UI reference set (planned)",
+      "status": "planned",
+      "rights": "study-only; never redistribute payloads"
+    },
+    {
+      "id": "motion-reference-example",
+      "kind": "video",
+      "title": "Example motion reference set (planned)",
+      "status": "planned",
+      "rights": "study-only; never redistribute payloads"
+    },
+    {
+      "id": "type-reference-example",
+      "kind": "pictures",
+      "title": "Example typography reference set (planned)",
+      "status": "planned",
+      "rights": "study-only; never redistribute payloads"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+ "_note": "Evidence table, same format as skills/retro-pixel. Every figure on screen comes from here via EV.fig/EV.num, and every string with digits goes through EV.guard. Replace these DEMO rows with the project's fact sheet; keep 'src' pointing at the exact section.",
+ "_extra_tokens": {"v": "2015 2016 2017 2018 2019 2020 2021 2022 2023 2024 2025 2030 2035 2040 2045 2050", "src": "years used as axis labels and the bubble-chart clock"},
+ "kpi.uptime": {"v": "99.9%", "src": "DEMO ONLY"},
+ "kpi.sites": {"v": "1.5M", "src": "DEMO ONLY"},
+ "kpi.water": {"v": "70%", "src": "DEMO ONLY"},
+ "wedge.base2020": {"v": "1.8", "src": "DEMO ONLY: emissions 2020 (Gt)"},
+ "wedge.bau2050": {"v": "2.6", "src": "DEMO ONLY: business-as-usual 2050 (Gt)"},
+ "wedge.eff2050": {"v": "0.5", "src": "DEMO ONLY: efficiency wedge 2050 (Gt)"},
+ "wedge.ren2050": {"v": "0.4", "src": "DEMO ONLY: renewables wedge 2050 (Gt)"},
+ "wedge.loop2050": {"v": "0.3", "src": "DEMO ONLY: closed-loop wedge 2050 (Gt)"},
+ "wedge.after_eff": {"v": "2.1", "src": "DEMO ONLY: derived 2.6 - 0.5 (shown after the first wedge)"},
+ "wedge.after_ren": {"v": "1.7", "src": "DEMO ONLY: derived 2.6 - 0.5 - 0.4 (shown after the second wedge)"},
+ "wedge.net2050": {"v": "1.4", "src": "DEMO ONLY: 2.6 - 0.5 - 0.4 - 0.3"},
+ "spec.length": {"v": "4715 mm", "src": "DEMO ONLY"},
+ "spec.weight": {"v": "32 g", "src": "DEMO ONLY"},
+ "spec.life": {"v": "12 yr", "src": "DEMO ONLY"},
+ "price": {"v": "$45,000", "src": "DEMO ONLY"},
+ "disc.demo": {"v": "Demonstration only. All figures are placeholders.", "src": "template disclosure"}
+}

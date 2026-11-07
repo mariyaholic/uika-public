@@ -1,0 +1,19 @@
+{
+  "schema": "uika.figure-manifest.v1",
+  "id": "harness-matrix",
+  "form": "matrix",
+  "title": "Harness capability coverage",
+  "source": null,
+  "source_sha256": "b702396c29c88913a08b66e8e44ee39df92dee9fbeeb6d5c8ceeb9a925a467ca",
+  "tokens_sha256": "7340ff34fe694f521fbc2ab2341b804feb6714f5a317df552c93649fc5ecd97c",
+  "figure_sha256": "74e5e2b876ac901ad7c353ae188895b7044cd83b091461e12259100503c9a8a7",
+  "rows": [
+    "skills",
+    "mcp",
+    "hooks",
+    "migrate"
+  ],
+  "interpretation": {
+    "provenance": "labs/harness-matrix (illustrative fixture)"
+  }
+}

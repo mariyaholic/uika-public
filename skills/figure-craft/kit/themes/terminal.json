@@ -1,0 +1,83 @@
+{
+  "_note": "terminal — mono-forward dark skin for logs/CLI docs. Sage (the functional green) is the accent; every role binds to an installed monospace family.",
+  "color": {
+    "$type": "color",
+    "bg-ground": {
+      "$value": "#070a08"
+    },
+    "bg-panel": {
+      "$value": "#0d120e"
+    },
+    "bg-panel-2": {
+      "$value": "#121a14"
+    },
+    "line": {
+      "$value": "#1e2a20"
+    },
+    "line-strong": {
+      "$value": "#2f4433"
+    },
+    "gold": {
+      "$value": "#6e9c7e"
+    },
+    "gold-bright": {
+      "$value": "#a9d8b6"
+    },
+    "gold-dim": {
+      "$value": "#3f5a48"
+    },
+    "lavender": {
+      "$value": "#8ea987"
+    },
+    "marigold": {
+      "$value": "#c08a3e"
+    },
+    "lining": {
+      "$value": "#a2434d"
+    },
+    "sage": {
+      "$value": "#6e9c7e"
+    },
+    "wine": {
+      "$value": "#7a2340"
+    },
+    "text": {
+      "$value": "#cfe3d3"
+    },
+    "text-bright": {
+      "$value": "#e6f2e9"
+    },
+    "muted": {
+      "$value": "#7c9182"
+    },
+    "slate": {
+      "$value": "#5b6d61"
+    }
+  },
+  "fontFamily": {
+    "$type": "fontFamily",
+    "font-display": {
+      "$value": "Consolas, monospace"
+    },
+    "font-brand": {
+      "$value": "Consolas, monospace"
+    },
+    "font-mono": {
+      "$value": "Consolas, monospace"
+    }
+  },
+  "fonts": {
+    "display": {
+      "family": "Consolas, monospace",
+      "system": true
+    },
+    "brand": {
+      "family": "Consolas, monospace",
+      "system": true
+    },
+    "mono": {
+      "family": "Consolas, monospace",
+      "system": true
+    }
+  }
+}

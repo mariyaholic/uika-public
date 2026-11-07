@@ -1,0 +1,83 @@
+{
+  "_note": "nocturne — the wine-lit stage (ADR-0012). A dark variant whose ground is drawn from a wine-red curtain token, gold kept as the dominant mark.",
+  "color": {
+    "$type": "color",
+    "bg-ground": {
+      "$value": "#12060c"
+    },
+    "bg-panel": {
+      "$value": "#1d0b14"
+    },
+    "bg-panel-2": {
+      "$value": "#260f1a"
+    },
+    "line": {
+      "$value": "#3a1a26"
+    },
+    "line-strong": {
+      "$value": "#55263a"
+    },
+    "gold": {
+      "$value": "#d8b878"
+    },
+    "gold-bright": {
+      "$value": "#e9e4da"
+    },
+    "gold-dim": {
+      "$value": "#7d6738"
+    },
+    "lavender": {
+      "$value": "#a497d6"
+    },
+    "marigold": {
+      "$value": "#e08d3c"
+    },
+    "lining": {
+      "$value": "#a2434d"
+    },
+    "sage": {
+      "$value": "#6e9c7e"
+    },
+    "wine": {
+      "$value": "#881144"
+    },
+    "text": {
+      "$value": "#e6dfe0"
+    },
+    "text-bright": {
+      "$value": "#f3eef0"
+    },
+    "muted": {
+      "$value": "#b09aa4"
+    },
+    "slate": {
+      "$value": "#7e6a74"
+    }
+  },
+  "fontFamily": {
+    "$type": "fontFamily",
+    "font-display": {
+      "$value": "'Cinzel', serif"
+    },
+    "font-brand": {
+      "$value": "'Outfit', sans-serif"
+    },
+    "font-mono": {
+      "$value": "'JetBrains Mono', monospace"
+    }
+  },
+  "fonts": {
+    "display": {
+      "family": "'Cinzel', serif",
+      "system": true
+    },
+    "brand": {
+      "family": "'Outfit', sans-serif",
+      "system": true
+    },
+    "mono": {
+      "family": "'JetBrains Mono', monospace",
+      "system": true
+    }
+  }
+}

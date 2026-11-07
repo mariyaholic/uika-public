@@ -1,0 +1,86 @@
+{
+  "_note": "lain-letter — the subtitle look. Body and data in Love Letter Typewriter, display in TrixieCyr Plain (both installed in the per-user font store; bound by exact family name, never a substitute). CRT monochrome + signal red.",
+  "color": {
+    "$type": "color",
+    "bg-ground": {
+      "$value": "#08090b"
+    },
+    "bg-panel": {
+      "$value": "#101317"
+    },
+    "bg-panel-2": {
+      "$value": "#171b20"
+    },
+    "line": {
+      "$value": "#20262c"
+    },
+    "line-strong": {
+      "$value": "#333c44"
+    },
+    "gold": {
+      "$value": "#e6e6df"
+    },
+    "gold-bright": {
+      "$value": "#ffffff"
+    },
+    "gold-dim": {
+      "$value": "#7d837c"
+    },
+    "lavender": {
+      "$value": "#8fa0c0"
+    },
+    "marigold": {
+      "$value": "#c9a227"
+    },
+    "lining": {
+      "$value": "#b3342f"
+    },
+    "sage": {
+      "$value": "#6e9c7e"
+    },
+    "wine": {
+      "$value": "#7a2340"
+    },
+    "text": {
+      "$value": "#c3c9c4"
+    },
+    "text-bright": {
+      "$value": "#eef1ee"
+    },
+    "muted": {
+      "$value": "#7e8781"
+    },
+    "slate": {
+      "$value": "#59615c"
+    }
+  },
+  "fontFamily": {
+    "$type": "fontFamily",
+    "font-display": {
+      "$value": "'TrixieCyr Plain', serif"
+    },
+    "font-brand": {
+      "$value": "'Love Letter Typewriter', monospace"
+    },
+    "font-mono": {
+      "$value": "'Love Letter Typewriter', monospace"
+    }
+  },
+  "fonts": {
+    "display": {
+      "family": "'TrixieCyr Plain', serif",
+      "system": true,
+      "src": "<USER_FONTS_DIR>/TrixieCyr-Plain.ttf"
+    },
+    "brand": {
+      "family": "'Love Letter Typewriter', monospace",
+      "system": true,
+      "src": "<USER_FONTS_DIR>/LoveLetterTypewriter.ttf"
+    },
+    "mono": {
+      "family": "'Love Letter Typewriter', monospace",
+      "system": true,
+      "src": "<USER_FONTS_DIR>/LoveLetterTypewriter.ttf"
+    }
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/mariyaholic/uika-public/chore/public-preview/schema/estate.schema.json",
+  "title": "uika estate manifest (v2 draft)",
+  "description": "The machine manifest of an agent estate: one canonical source from which law blocks, harness adapters, skill placement, and distribution are generated. Personal instances live OUTSIDE this repository; this schema describes the shape, never the contents. Unknown fields are allowed on purpose: the schema governs what uika reads, and everything else is yours.",
+  "type": "object",
+  "required": ["estate"],
+  "properties": {
+    "estate": {
+      "type": "object",
+      "required": ["name", "posture", "harnesses", "sessionProtocol"],
+      "additionalProperties": true,
+      "properties": {
+        "name": { "type": "string", "description": "Estate name; stamped into generated law blocks." },
+        "root": { "type": "string", "description": "Estate root directory. Informational; uika resolves roots via --root / UIKA_ESTATE_HOME." },
+        "roles": { "type": "array", "items": { "type": "string" } },
+        "publish": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": { "status": { "enum": ["private", "public", "draft"] }, "portfolioExcerpt": { "type": "boolean" } }
+        },
+        "posture": {
+          "type": "object",
+          "required": ["mode", "enforcement"],
+          "additionalProperties": true,
+          "properties": {
+            "mode": { "type": "string", "description": "e.g. near-autopilot | supervised | manual" },
+            "secrets": { "type": "string", "description": "e.g. local-egress-locked. Keys are env-var names only, never values." },
+            "selfEditLock": { "type": "string", "description": "How fully agents may edit the estate's own files: none | partial | full" },
+            "gitGating": { "type": "string", "description": "e.g. free-except-main" },
+            "enforcement": { "enum": ["advisory-first", "warn", "strict"] },
+            "subagentTurnBudget": { "type": "integer", "minimum": 1 },
+            "parallelism": { "type": "string" },
+            "implementationIsolation": { "type": "string" },
+            "delegation": { "type": "string" },
+            "subagentRoster": { "type": "string" }
+          }
+        },
+        "harnesses": {
+          "type": "array",
+          "minItems": 1,
+          "description": "The seam census: how each agent harness exposes instructions, skills, MCP, and budgets.",
+          "items": {
+            "type": "object",
+            "required": ["id", "tier", "configHome"],
+            "additionalProperties": true,
+            "properties": {
+              "id": { "type": "string", "description": "e.g. claude-code, codex, opencode, cline, dsh, hermes" },
+              "tier": { "enum": ["verified", "probed", "planned"] },
+              "configHome": { "type": "string", "description": "Harness config home, ~-form." },
+              "instructions": { "type": "string", "description": "Instruction chain: which files load, in what order, under which budgets." },
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "sessionProtocol": {
+          "type": "object",
+          "required": ["freshness", "workstack"],
+          "additionalProperties": true,
+          "properties": {
+            "freshness": { "type": "string", "description": "mtime-first | git-status-first" },
+            "freshnessFallback": { "type": "string" },
+            "workstack": { "type": "string", "description": "Path convention of the session ledger, e.g. WORKSTACK.md at every managed repo root." }
+          }
+        },
+        "budgets": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "alwaysLoadedFileLines": { "type": "integer", "minimum": 1, "description": "Max lines of any file loaded into every session (lint target)." },
+            "codexProjectDocBytes": { "type": "integer", "minimum": 1 },
+            "enforcement": { "enum": ["warn", "error", "off"] }
+          }
+        },
+        "knowledge": { "type": "object", "additionalProperties": true },
+        "distribution": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "mode": { "type": "string", "description": "sync-script | deploy-hook" },
+            "adapterForm": { "type": "string", "description": "imports-and-copies, no symlinks" },
+            "onboarding": { "type": "string" },
+            "targets": {
+              "type": "array",
+              "description": "Owner-curated managed repos. Machine-local auto-adoptions live separately in data/deploy/targets.json.",
+              "items": {
+                "type": "object",
+                "required": ["repo", "path"],
+                "additionalProperties": true,
+                "properties": {
+                  "repo": { "type": "string" },
+                  "path": { "type": "string" },
+                  "synced": { "type": "string" },
+                  "dataRoot": { "type": "string" },
+                  "concerns": { "type": "array", "items": { "type": "string" } }
+                }
+              }
+            }
+          }
+        },
+        "roster": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "handleShape": { "type": "string", "description": "e.g. <harness>.<role>" },
+            "harnesses": { "type": "array", "items": { "type": "string" } },
+            "roles": { "type": "array", "items": { "type": "string" } },
+            "modelAliasesFrom": { "type": "string" }
+          }
+        },
+        "skills": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "library": { "type": "string", "description": "Skills library directory, estate-relative." },
+            "homes": { "type": "array", "items": { "type": "string" }, "description": "Harness skill homes that `uika skills place` fills." },
+            "desktop": { "type": "object", "additionalProperties": true }
+          }
+        },
+        "projects": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": { "registry": { "type": "string", "description": "projects/registry.json - name -> {paths[], aliases[], default?, note?}" } }
+        },
+        "mcp": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": { "registry": { "type": "string" }, "applyMode": { "enum": ["render-only", "apply"] } }
+        },
+        "providers": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "registry": { "type": "string" },
+            "keys": { "type": "string", "description": "Must be env-var-names-only in spirit; values live in the user environment." }
+          }
+        },
+        "register": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "adrs": { "type": "string" },
+            "learnings": { "type": "string" },
+            "flow": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

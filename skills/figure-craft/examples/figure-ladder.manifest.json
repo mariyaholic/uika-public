@@ -1,0 +1,14 @@
+{
+  "schema": "uika.figure-manifest.v1",
+  "id": "figure-ladder",
+  "form": "flow",
+  "title": "From brief to artifact",
+  "source": null,
+  "source_sha256": "192708e7b80fb6127e60da3780bb92f8dcecd1e0e07e7f6321800f41ad212141",
+  "tokens_sha256": "889785a344af97927a7559dadcf08a985577c35a4bceaf291a11669e671412ec",
+  "figure_sha256": "471eae64b64a1cef20b4bf35311cccb70bff17921486872d5bc7664684b920ee",
+  "rows": null,
+  "interpretation": {
+    "provenance": "ADR-0034 — the figure engine and the output ladder"
+  }
+}

@@ -1,0 +1,24 @@
+NOTICE — uika (0.1.0 preview)
+
+1. No personal data. This repository ships no personal paths, registries,
+   archives, telemetry, or credentials. Estate instances live outside the
+   tool; point UIKA_ESTATE_HOME (or --root) at your own estate directory.
+   Every file under examples/ is synthetic and written for this release.
+
+2. Keys by reference. Configuration carries environment-variable *names*
+   only (keyEnv / secretEnv). Secret values never belong in any file this
+   tool reads or writes. See skills/mcp-and-keys and docs/manual.md.
+
+3. Skills. skills/ contains estate-authored skills in the Agent Skills
+   format (one folder with SKILL.md each). Third-party skills are NOT
+   vendored here; pin your own copies if you need them.
+
+4. Lineage. The law-block format, session protocol, and harness-matrix
+   knowledge in this release were distilled from a private personal estate
+   tool of the same name; the private instance remains private. Source
+   comments cite decision records as "ADR-00NN"; those records belong to
+   the private estate and are not published with this package.
+
+5. Status. This is the 0.1.0 preview: the bundled modules are the real,
+   tested implementation; docs and schema are new writing. See
+   CHANGELOG.md for release notes and known limitations.

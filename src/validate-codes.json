@@ -1,0 +1,29 @@
+{
+  "_note": "Stable warning codes for uika validators. Codes never change meaning; retire a code instead of reusing it. severity: warn keeps the exit code 0 (the validate contract); error would be reserved for a future breaking check. Messages match the CLI text; {placeholders} are filled at run time.",
+  "skills": {
+    "SKV001": {
+      "message": "name \"{name}\" != directory",
+      "severity": "warn",
+      "when": "The SKILL.md frontmatter `name` differs from the skill's folder name, or is missing (no frontmatter block reads as name \"undefined\").",
+      "fix": "Set `name:` in the frontmatter to the exact folder name, or rename the folder. Add a `---` frontmatter block if there is none."
+    },
+    "SKV002": {
+      "message": "{key}: unquoted value contains \": \" or \" #\" (invalid YAML; quote it)",
+      "severity": "warn",
+      "when": "A frontmatter value that is not quoted or a block scalar contains \": \" or \" #\". Harnesses then fail to parse the YAML and drop the whole frontmatter.",
+      "fix": "Wrap the value in double quotes (escape inner quotes), or use a `|` or `>` block scalar."
+    },
+    "SKV003": {
+      "message": "no description",
+      "severity": "warn",
+      "when": "The frontmatter has no `description`, or it is empty.",
+      "fix": "Add a `description:` that says when to use the skill; harnesses route on it."
+    },
+    "SKV004": {
+      "message": "description {length} chars (> 1024)",
+      "severity": "warn",
+      "when": "The frontmatter `description` is longer than 1024 characters.",
+      "fix": "Shorten the description to 1024 characters or fewer; move detail into the SKILL.md body."
+    }
+  }
+}

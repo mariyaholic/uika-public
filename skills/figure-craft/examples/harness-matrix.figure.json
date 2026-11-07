@@ -1,0 +1,13 @@
+{
+  "id": "harness-matrix",
+  "title": "Harness capability coverage",
+  "caption": "1 = wired, 0 = not; source labs/harness-matrix",
+  "form": "matrix",
+  "data": {
+    "rows": ["skills", "mcp", "hooks", "migrate"],
+    "cols": ["claude", "codex", "opencode", "commandcode"],
+    "values": [[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 0, 1], [1, 1, 1, 1]],
+    "rows_detail": []
+  },
+  "notes": { "provenance": "labs/harness-matrix (illustrative fixture)" }
+}
