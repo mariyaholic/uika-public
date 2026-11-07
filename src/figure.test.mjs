@@ -6,13 +6,13 @@ import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, readdirSyn
 import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { spawnSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { compile } from "../skills/figure-craft/kit/figure.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const CLI = join(ROOT, "bin", "uika.mjs");
 const EXAMPLES = join(ROOT, "skills", "figure-craft", "examples");
-const temp = (t) => { const d = mkdtempSync(join(tmpdir(), "uika-figure-")); t.after(() => rmSync(d, { recursive: true, force: true })); return d; };
+const temp = (t, prefix = "uika-figure-") => { const d = mkdtempSync(join(tmpdir(), prefix)); t.after(() => rmSync(d, { recursive: true, force: true })); return d; };
 const run = (args, root) => spawnSync(process.execPath, [CLI, ...args, "--root", root], { encoding: "utf8" });
 const SPEC = { id: "demo", title: "Demo bars", form: "bar", data: { series: [{ label: "alpha", value: 3 }, { label: "beta", value: 5 }] }, notes: { provenance: "synthetic" } };
 let HAVE_PLAYWRIGHT = true;
@@ -100,11 +100,12 @@ test("figure rejects invalid dimensions and chart numbers", (t) => {
 });
 
 test("figure atomically replaces an output hard link without changing its other name", (t) => {
-  const d = temp(t), out = join(d, "out"), victim = join(d, "outside.svg"), spec = join(d, "demo.figure.json");
+  // URL delimiters exercise module-path encoding on POSIX as well as Windows.
+  const d = temp(t, "uika-figure #%-"), out = join(d, "out"), victim = join(d, "outside.svg"), spec = join(d, "demo.figure.json");
   mkdirSync(out); writeFileSync(victim, "outside bytes"); chmodSync(victim, 0o640);
   linkSync(victim, join(out, "demo.svg")); writeFileSync(spec, JSON.stringify(SPEC));
   const preload = join(d, "umask.mjs"); writeFileSync(preload, "process.umask(0o022);\n");
-  const r = spawnSync(process.execPath, ["--import", preload, CLI, "figure", "render", spec, "--out", out, "--formats", "svg,html", "--apply", "--root", d], { encoding: "utf8" });
+  const r = spawnSync(process.execPath, ["--import", pathToFileURL(preload).href, CLI, "figure", "render", spec, "--out", out, "--formats", "svg,html", "--apply", "--root", d], { encoding: "utf8" });
   assert.equal(r.status, 0, r.stderr);
   assert.equal(readFileSync(victim, "utf8"), "outside bytes");
   assert.match(readFileSync(join(out, "demo.svg"), "utf8"), /^<svg/);
@@ -128,10 +129,10 @@ test("distribution rejects lost observations and preserves supplied bin frequenc
 });
 
 test("figure leaves existing destination untouched when browser launch fails", (t) => {
-  const d = temp(t), spec = join(d, "demo.figure.json"), out = join(d, "out"), loader = join(d, "loader.mjs");
+  const d = temp(t, "uika-figure #%-"), spec = join(d, "demo.figure.json"), out = join(d, "out"), loader = join(d, "loader.mjs");
   mkdirSync(out); writeFileSync(join(out, "demo.svg"), "original"); writeFileSync(spec, JSON.stringify(SPEC));
   writeFileSync(loader, `export async function resolve(s,c,n){if(s==='playwright')return {url:'data:text/javascript,export const chromium={launch:async()=>{throw new Error("synthetic launch failure")}}',shortCircuit:true};return n(s,c)}\n`);
-  const r = spawnSync(process.execPath, ["--no-warnings", "--experimental-loader", loader, CLI, "figure", "render", spec, "--out", out, "--formats", "svg,html,png", "--apply", "--root", d], { encoding: "utf8" });
+  const r = spawnSync(process.execPath, ["--no-warnings", "--experimental-loader", pathToFileURL(loader).href, CLI, "figure", "render", spec, "--out", out, "--formats", "svg,html,png", "--apply", "--root", d], { encoding: "utf8" });
   assert.notEqual(r.status, 0);
   assert.match(r.stderr, /synthetic launch failure/);
   assert.equal(readFileSync(join(out, "demo.svg"), "utf8"), "original");

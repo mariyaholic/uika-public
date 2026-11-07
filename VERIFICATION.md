@@ -15,7 +15,9 @@ npm pack --dry-run --json
 
 The test suite includes isolated tarball installation and installed CLI smoke checks. Run these commands with Node.js 22 or later.
 
-## Reviewed repair identity
+## Historical reviewed repair identity
+
+These hashes identify the original five-file repair as first exported. The portability follow-up changes only the test fixture identified below; the four remaining files retain these hashes.
 
 | File | SHA-256 |
 | --- | --- |
@@ -25,10 +27,18 @@ The test suite includes isolated tarball installation and installed CLI smoke ch
 | src/video.mjs | `354836454c03f220900d86fd14c885f6065588877a588d7b2f26dd0efae7f7b1` |
 | src/video.test.mjs | `512de188d4d20ba303a5c6fa70c522afa1d8bca9e925da14fcd8fe00614ebd92` |
 
+## Windows test portability follow-up
+
+The [initial CI run](https://github.com/mariyaholic/uika-public/actions/runs/42328807053) passed Linux and macOS but failed two Windows figure tests before their intended assertions: filesystem paths were passed directly to Node ESM loading options. This follow-up uses file URLs for both options and gives those fixtures paths containing spaces, `#` and `%` to exercise URL encoding on every platform. The behavioral assertions are unchanged.
+
+Current `src/figure.test.mjs` SHA-256: `c51fd0a19132cdd8fc56c565d32a1b488378f51549ffdb099e33d67acc537a4d`.
+
+At preparation of this follow-up, its exact-head remote CI had not run. Consult the workflow results for the revision you use.
+
 ## Evidence boundaries
 
 Earlier local checks of these exact repair files passed 160 tests on Node 22.23.4 and 160 on Node 24.19.0. A separate synthetic isolation harness passed 39 cases. Those earlier runs do not substitute for rerunning the selected source tree.
 
-The CI workflow targets Node 22 on Linux, Windows and macOS. Remote CI for this independent repository has not run. Native browser PNG/PDF success, patched native Windows/macOS behavior and live provider or other-harness integration remain unverified. Browser-stub regressions verify failure handling, not native image export. Synthetic media checks do not demonstrate rights for user-supplied assets.
+The CI workflow targets Node 22 on Linux, Windows and macOS. Successful native browser PNG/PDF export, real browser/media integrations on Windows and macOS, and live provider or other-harness integration remain unverified. Browser-stub regressions verify failure handling, not native image export. Synthetic media checks do not demonstrate rights for user-supplied assets.
 
 No npm package or release is published by this source verification.
