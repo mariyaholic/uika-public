@@ -5,3 +5,4 @@
 *.jpg binary
 *.tgz binary
 *.zip binary
+scripts/agent/* text eol=lf
