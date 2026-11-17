@@ -1,6 +1,6 @@
 # uika
 
-A personal **estate layer for AI coding agents** — one lawbook, generated adapters, measured sessions.
+This is my **estate layer for AI coding agents**: one lawbook, generated adapters, measured sessions. I made it because my repos kept drifting apart. It is close to my heart, and I hope it helps you as much as it helps me.
 
 **Status: `0.1.0 source preview`; npm package unpublished.** This checkout is the source
 preview. Source: [source repository](https://github.com/mariyaholic/uika-public).
@@ -10,11 +10,12 @@ before 1.0.
 
 ## What / why
 
-You run agents (Claude Code, Codex, OpenCode, Cline, Gemini CLI, DSH, Hermes, …) across many
-repositories. Without an estate layer, every repo drifts: hand-maintained `AGENTS.md` files go
-stale, instructions get pasted between repos, skills exist in one harness home but not another,
-and nobody can tell a session what changed since last time. uika makes the agent-facing layer
-**generated, versioned, fingerprinted, and drift-audited** instead of hand-copied.
+I run agents (Claude Code, Codex, OpenCode, Cline, Gemini CLI, DSH, Hermes, …) across many
+repositories. Without an estate layer, every one of them drifted. Hand-maintained `AGENTS.md`
+files went stale. Instructions got pasted between repos. Skills existed in one harness home but
+not another, and nothing could tell a session what had changed since last time. uika makes the
+agent-facing layer **generated, versioned, fingerprinted, and drift-audited** instead of
+hand-copied.
 
 ```
 estate.json + AGENTS.md (canonical, hand-written)
@@ -27,8 +28,8 @@ freshness scan + WORKSTACK.md handoff protocol at session start/end
 
 ### The core ideas
 
-1. **Two canonical sources.** `estate.json` (machine manifest: posture, harnesses, targets,
-   registries) and your estate lawbook. Everything agent-facing downstream is *generated*.
+1. **Two canonical sources.** `estate.json` (the machine manifest: posture, harnesses, targets,
+   registries) and the estate lawbook. Everything agent-facing downstream is *generated*.
 2. **Fingerprinted law blocks.** `uika adopt` injects a marked, versioned block into a repo's
    `AGENTS.md`:
 
@@ -43,9 +44,9 @@ freshness scan + WORKSTACK.md handoff protocol at session start/end
 
    `uika docs check` audits drift; `uika lint` warns when always-loaded files blow budgets
    (≤200 lines, 32 KiB harness caps) or blocks go stale.
-3. **Public tool, private estate.** The tool carries zero personal data. Your estate —
+3. **Public tool, private estate.** The tool carries zero personal data. My estate —
    registries, targets, archives — lives in its own directory; point
-   `UIKA_ESTATE_HOME` (or `--root`) at it. `examples/` holds synthetic starting points.
+   `UIKA_ESTATE_HOME` (or `--root`) at yours. `examples/` holds synthetic starting points.
 4. **Keys by reference.** Configuration contains environment-variable *names* only
    (`secretEnv: "GITHUB_MCP_TOKEN"`); values never enter any file.
 5. **A session protocol, not folklore.** mtime-first freshness scan at session start, a
@@ -77,7 +78,7 @@ freshness scan + WORKSTACK.md handoff protocol at session start/end
 ## Install
 
 The 0.1.0 npm package is not published. `npm i -g uika` and `npx uika` are not installation
-methods for this preview. Run from this source tree or install a tarball you build from it:
+methods for this preview. Run it from this source tree, or install a tarball you build from it:
 
 ```sh
 # from a checkout
@@ -111,11 +112,11 @@ cd my-estate && node ../bin/uika.mjs lint
 
 The bootstrap creates an estate scaffold. Its ledger starts unclaimed, and it does not copy
 the bundled skills into your estate. Read the bundled `skills/` from the checkout or installed
-package, then choose the skills to copy into your estate’s `skills/` directory. Run
+package, then choose the skills to copy into your estate's `skills/` directory. Run
 `uika skills validate --strict` against that estate. Record your real harness handoff in
 `WORKSTACK.md` and run `uika session check` before treating a session as complete.
 
-For example, from the checkout, choose this small operating set for the new estate:
+For example, from the checkout, this is the small operating set I would choose for a new estate:
 
 ```sh
 node -e "const fs = require('node:fs'); for (const name of ['freshness-scan', 'handoff-protocol', 'principle-prove-it-works', 'wrap-checklist']) fs.cpSync('skills/' + name, 'my-estate/skills/' + name, {recursive: true, force: false, errorOnExist: true});"
@@ -173,13 +174,13 @@ registries, supply layer, `creative` ledger/deck/divergence commands, backup, li
 ### The skills library
 
 `skills/` contains 39 estate-authored skills in the [Agent Skills](https://agentskills.io)
-format (one folder, one `SKILL.md`): the original 17 operating and principle skills plus
+format (one folder, one `SKILL.md`): the original 17 operating and principle skills, plus
 22 ports covering creative work, media, figures, evaluation, and workflow templates.
 Third-party skills are not vendored; see [NOTICE](NOTICE) and the
 [skills scope and provenance](docs/SKILL_PORT_AUDIT.md).
 
 Six ports are templates with `MANUAL.md` setup guides. Media kits and raster export need
-optional tools that are not installed by the CLI package. Read each skill's requirements
+optional tools that the CLI package does not install. Read each skill's requirements
 before running its helpers. `uika skills place --apply` copies your estate's selected
 skills into its configured harness skill homes.
 
@@ -207,3 +208,4 @@ The test suite includes package-content checks and an isolated tarball install.
 Compatibility: APIs, manifest fields, and harness mappings may change before 1.0.
 License: MIT (see `NOTICE` for what is and is not in this repository).
 
+Thank you for stopping by. ♡
