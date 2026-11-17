@@ -2,210 +2,63 @@
 
 This is my **estate layer for AI coding agents**: one lawbook, generated adapters, measured sessions. I made it because my repos kept drifting apart. It is close to my heart, and I hope it helps you as much as it helps me.
 
+Uika makes the agent-facing layer generated, versioned, fingerprinted, and drift-audited instead of hand-copied. A law block goes into every managed repo, skills land in each harness's skill home, and every session starts with a freshness scan and ends with a handoff. [The core ideas](https://mariyaholic.github.io/docs/uika-public/#why) live on the docs page.
+
 **Status: `0.1.0 source preview`; npm package unpublished.** This checkout is the source
 preview. Source: [source repository](https://github.com/mariyaholic/uika-public).
 Source publication and an npm release are separate steps.
 APIs, `estate.json` manifest fields, the law-block format, and harness mappings may change
 before 1.0.
 
-## What / why
-
-I run agents (Claude Code, Codex, OpenCode, Cline, Gemini CLI, DSH, Hermes, …) across many
-repositories. Without an estate layer, every one of them drifted. Hand-maintained `AGENTS.md`
-files went stale. Instructions got pasted between repos. Skills existed in one harness home but
-not another, and nothing could tell a session what had changed since last time. uika makes the
-agent-facing layer **generated, versioned, fingerprinted, and drift-audited** instead of
-hand-copied.
-
-```
-estate.json + AGENTS.md (canonical, hand-written)
-        │  uika adopt / docs render / deploy
-        ▼
-law blocks (uika:law:begin … sha256 fingerprint) in every managed repo
-skill placement into each harness's skill home
-freshness scan + WORKSTACK.md handoff protocol at session start/end
-```
-
-### The core ideas
-
-1. **Two canonical sources.** `estate.json` (the machine manifest: posture, harnesses, targets,
-   registries) and the estate lawbook. Everything agent-facing downstream is *generated*.
-2. **Fingerprinted law blocks.** `uika adopt` injects a marked, versioned block into a repo's
-   `AGENTS.md`:
-
-   ```markdown
-   <!-- uika:law:begin -->
-   ## Estate law (generated — do not edit inside the markers)
-   ...
-   <!-- uika:generated from estate.json; edit the source, not this file -->
-   <!-- uika:docs v1 · sha256:54b31598afc2 -->
-   <!-- uika:law:end -->
-   ```
-
-   `uika docs check` audits drift; `uika lint` warns when always-loaded files blow budgets
-   (≤200 lines, 32 KiB harness caps) or blocks go stale.
-3. **Public tool, private estate.** The tool carries zero personal data. My estate —
-   registries, targets, archives — lives in its own directory; point
-   `UIKA_ESTATE_HOME` (or `--root`) at yours. `examples/` holds synthetic starting points.
-4. **Keys by reference.** Configuration contains environment-variable *names* only
-   (`secretEnv: "GITHUB_MCP_TOKEN"`); values never enter any file.
-5. **A session protocol, not folklore.** mtime-first freshness scan at session start, a
-   `WORKSTACK.md` ledger with 6-line handoffs (`From→To / Done / Next / Files / Verify /
-   Blockers`), a wrap checklist at session end, and `uika session check` to enforce it.
-
-## Requirements
-
-- **Node.js ≥ 22.** uika has **zero npm runtime dependencies**: it uses Node built-ins only.
-- **Platform verification:** the included CI workflow targets Node 22 on Linux, Windows,
-  and macOS. Run `npm test` for the revision you use and check its CI results. A Linux
-  test run alone does not verify native Windows or macOS behavior. Optional media tools,
-  provider setup, and live harness integrations need separate checks in your environment.
-- **Git** is needed only by some commands:
-
-  | Command | Git |
-  |---|---|
-  | `deploy status`, `deploy install\|uninstall`, `deploy auto …`, `deploy hook-run` | required (reads commits, installs hooks, sets `init.templateDir`) |
-  | `deploy targets`, `deploy adopt`, `deploy forget` | not used |
-  | `find` | optional: uses `git ls-files` in Git roots, walks the tree otherwise |
-  | `lint` | optional: the branch-name check is skipped outside a Git repo |
-  | `docs check` | optional: used to tell tracked from untracked link targets |
-  | `check` | probes for Git and reports its version, or that it is missing |
-  | all other commands | not used |
-
-- No archive tool is needed: 0.1.0 does not pack skills into zips (the Windows-only
-  `skills pack` leg was removed; see `docs/manual.md` Part 6).
-
 ## Install
 
-The 0.1.0 npm package is not published. `npm i -g uika` and `npx uika` are not installation
-methods for this preview. Run it from this source tree, or install a tarball you build from it:
+uika runs on Node.js 22 or later and uses Node built-ins only — no npm dependencies. The
+npm package is not published, so `npm i -g uika` and `npx uika` are not ways in. Run it from
+this source tree:
 
 ```sh
-# from a checkout
 node bin/uika.mjs check          # machine probe: runtimes, harness homes, drives
-
-# or: build and install a local tarball
-npm pack                         # writes uika-0.1.0.tgz
-npm install -g ./uika-0.1.0.tgz  # puts `uika` on PATH
 ```
 
-## Run
-
-uika runs against an **estate directory**: `--root <dir>`, else `UIKA_ESTATE_HOME`, else the
-current directory.
+To put `uika` on your PATH, build and install a tarball:
 
 ```sh
-# A — tool lives inside the estate (monorepo pattern): the checkout IS the estate root
-node bin/uika.mjs lint
-
-# B — the CLI against a separate estate directory (public tool / private estate)
-UIKA_ESTATE_HOME=~/estate node bin/uika.mjs docs version
-# or: node bin/uika.mjs docs version --root ~/estate
+npm pack                         # writes uika-0.1.0.tgz
+npm install -g ./uika-0.1.0.tgz
 ```
 
-Bootstrap an estate in one command, then verify it:
+## Get started
+
+uika works on an **estate directory**: a folder with your `estate.json`, your rules and your
+skills. Make one and check it:
 
 ```sh
 node bin/uika.mjs init my-estate --apply
 cd my-estate && node ../bin/uika.mjs lint
 ```
 
-The bootstrap creates an estate scaffold. Its ledger starts unclaimed, and it does not copy
-the bundled skills into your estate. Read the bundled `skills/` from the checkout or installed
-package, then choose the skills to copy into your estate's `skills/` directory. Run
-`uika skills validate --strict` against that estate. Record your real harness handoff in
-`WORKSTACK.md` and run `uika session check` before treating a session as complete.
+The bootstrap makes a scaffold but does not copy the bundled skills. Read them in the
+checkout, choose the ones you want, then copy and validate them. My own small operating set,
+and the full recipe, are in [Make an estate](https://mariyaholic.github.io/docs/uika-public/#estate)
+on the docs page. Commands that write files are dry runs until you pass `--apply`.
 
-For example, from the checkout, this is the small operating set I would choose for a new estate:
+To keep the tool public and the estate private, point uika at your own directory with
+`UIKA_ESTATE_HOME` or `--root`. The tool carries no personal data, and your estate stays
+yours.
 
-```sh
-node -e "const fs = require('node:fs'); for (const name of ['freshness-scan', 'handoff-protocol', 'principle-prove-it-works', 'wrap-checklist']) fs.cpSync('skills/' + name, 'my-estate/skills/' + name, {recursive: true, force: false, errorOnExist: true});"
-node bin/uika.mjs skills validate --root my-estate --strict
-```
+## Everything else
 
-The copy refuses existing destinations so local skill edits are preserved. For a tarball
-installation, use its packaged `skills/` folder as the source. Strict validation fails if
-no skills were discovered; ordinary validation reports the empty library explicitly.
+The technical detail lives in [uika's documentation](https://mariyaholic.github.io/docs/uika-public/) on my site:
 
-Commands that write are dry runs unless you pass `--apply`. Combining `--apply` and
-`--dry-run` is an error before any command executes. Two documented exceptions:
-`deploy hook-run` is the post-commit hook the owner installed with `--apply`, so it writes when
-Git runs it; `session check --stop` records a one-byte once-per-session sentinel (inside an
-existing `.git/`, else the OS temp directory) so a Stop hook blocks at most once. Verify a checkout with `npm test`.
+- [Why an estate layer](https://mariyaholic.github.io/docs/uika-public/#why) — two canonical sources, fingerprinted law blocks, keys by reference
+- [Check what you need](https://mariyaholic.github.io/docs/uika-public/#requirements) — Node, platform verification, and when Git matters
+- [The commands](https://mariyaholic.github.io/docs/uika-public/#commands) — all 19 of them, plus the media, reference and eval detail
+- [Use the skills library](https://mariyaholic.github.io/docs/uika-public/#skills) — 39 skills, provenance, templates and optional tools
+- [Keep a session honest](https://mariyaholic.github.io/docs/uika-public/#session) — freshness scan, WORKSTACK.md handoffs, wrap checklist
+- [See where things live](https://mariyaholic.github.io/docs/uika-public/#layout) — the layout of this checkout
+- [Verify a checkout](https://mariyaholic.github.io/docs/uika-public/#verify) — the checks that must pass
+- [Reference](https://mariyaholic.github.io/docs/uika-public/#reference) — the manual, harness matrix, roadmap, changelog, security and contributing
 
-## Commands
-
-The dispatcher registers 19 commands:
-
-| Command | What it does |
-|---|---|
-| `init [dir] [--name n] [--apply]` | Bootstrap a compliant new estate from scratch in one command |
-| `check` | Machine probe: runtimes, harness homes, drive space |
-| `lint [--strict]` | Context-budget linter — always-loaded file lines, law-block drift, skill hygiene |
-| `sync <repo> [--force] [--apply]` | Distribute estate config into a clean target repo |
-| `skills validate [--strict]\|place` / `audit` | Validate skills, place into harness skill homes; audit script bloat |
-| `find` / `where` | Estate-wide fuzzy file search by project/mtime; project nickname resolution |
-| `path` / `layout` | Where a file goes in an estate-managed repo |
-| `session check [repo]` | Freshness + WORKSTACK handoff + wrap gate |
-| `adopt <repo>` | Inject the fingerprinted law block into a managed repo (`--apply`, `--dry-run`) |
-| `deploy …` | Commit-triggered distribution: status/targets/adopt/forget/install/uninstall/auto/hook-run |
-| `docs check\|render\|init\|migrate\|version` | The markdown standard: generated law block + hand-written body, audited; `migrate [repo] [--apply]` repairs legacy repos (strips pasted law, folds a hand-written `CLAUDE.md` into `AGENTS.md`, keeps `.bak-<date>` backups) |
-| `home status\|regen` | Render harness home-law files (`~/.dsh/AGENTS.md`, `~/.hermes.md` style) |
-| `video ls\|qa\|sheet\|frame\|structure\|diff\|prompt lint` | Find, QA, sample and profile rendered films; lint a video prompt pack. Needs `ffmpeg`/`ffprobe` on `PATH` (or `UIKA_FFMPEG`/`UIKA_FFPROBE`) for everything except `ls`, `diff` and `prompt lint` |
-| `figure check\|render\|ls\|theme` | Deterministic SVG/HTML figures from `*.figure.json` specs with guards and a provenance manifest; PNG/PDF need Playwright, which is not bundled |
-| `ref ls\|show\|hash\|check` | Read the reference registry and verify versioned content hashes; `hash <id> --json` prints a read-only baseline for review |
-| `eval ls\|run\|compare` | Run your own grader tasks (`labs/eval/tasks/*.json`) with train/test splits and a keep/revert verdict; no model API is called by uika |
-
-Commands that write files (`video sheet|frame|structure --out`, `figure render`, `eval run`) are dry runs
-until you pass `--apply`. Not bundled (see `docs/roadmap.md`): usage tracker, MCP/model/prompt
-registries, supply layer, `creative` ledger/deck/divergence commands, backup, limiter, mt5.
-
-## Layout
-
-| Path | What lives there |
-|---|---|
-| `bin/uika.mjs` | the CLI entry point |
-| `src/` | command modules and their `node:test` suites (`*.test.mjs`) |
-| `skills/` | the estate-authored skills library |
-| `templates/`, `schema/`, `examples/` | scaffolding, JSON schemas, synthetic starting points |
-| `docs/` | the manual, harness matrix, agent guide, roadmap |
-| `tools/` | maintainer tools (the privacy scrub); not packed |
-
-### The skills library
-
-`skills/` contains 39 estate-authored skills in the [Agent Skills](https://agentskills.io)
-format (one folder, one `SKILL.md`): the original 17 operating and principle skills, plus
-22 ports covering creative work, media, figures, evaluation, and workflow templates.
-Third-party skills are not vendored; see [NOTICE](NOTICE) and the
-[skills scope and provenance](docs/SKILL_PORT_AUDIT.md).
-
-Six ports are templates with `MANUAL.md` setup guides. Media kits and raster export need
-optional tools that the CLI package does not install. Read each skill's requirements
-before running its helpers. `uika skills place --apply` copies your estate's selected
-skills into its configured harness skill homes.
-
-### Documentation
-
-- `docs/manual.md` — the book: estate model, law blocks, session protocol, distribution.
-- `docs/harness-matrix.md` — how each harness exposes instructions/skills/MCP, with a
-  verification status per row.
-- `docs/roadmap.md` — what later releases add.
-- `CHANGELOG.md` — release notes and known limitations.
-- `SECURITY.md` — what each command can write, the dry-run rule, and how to report a
-  vulnerability.
-- `CONTRIBUTING.md` — ground rules and the checks to run before a pull request.
-
-## Status
-
-**`0.1.0 developer preview`.** Uika supplies the estate, skills, and session layer used by
-an agent harness. The harness provides model execution, tool access, and its own authorization
-controls. Uika does not include a model-running autonomous engine. Provider setup and live
-harness integrations require separate verification.
-
-Verify this source revision with `npm test`, `npm run scrub`,
-`node bin/uika.mjs lint --strict`, and `node bin/uika.mjs docs check --strict`.
-The test suite includes package-content checks and an isolated tarball install.
-Compatibility: APIs, manifest fields, and harness mappings may change before 1.0.
 License: MIT (see `NOTICE` for what is and is not in this repository).
 
 Thank you for stopping by. ♡
