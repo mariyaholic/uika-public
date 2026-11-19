@@ -1,7 +1,7 @@
 // unmask.test.mjs — tests for Unmask UI & implicit state-machine auditor
 import test from "node:test";
 import assert from "node:assert";
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { auditFile, auditDirectory } from "./unmask.mjs";
@@ -57,6 +57,24 @@ test("auditDirectory skips skills/vendor/ by default and includes it when includ
     const includedFindings = auditDirectory(tmp, { includeVendor: true });
     assert.ok(includedFindings.length > 0);
     assert.ok(includedFindings.some((f) => f.file.includes("bad.html")));
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("auditDirectory skips symlinks cleanly", () => {
+  const tmp = mkdtempSync(join(tmpdir(), "uika-unmask-sym-"));
+  try {
+    const sub = join(tmp, "sub");
+    mkdirSync(sub, { recursive: true });
+    writeFileSync(join(sub, "ok.html"), "<button type=\"button\">Ok</button><style>button:focus-visible{}</style>", "utf8");
+    symlinkSync(tmp, join(sub, "loop"));
+    const outside = join(tmp, "outside.html");
+    writeFileSync(outside, "<button>Bad</button>", "utf8");
+    symlinkSync(outside, join(sub, "linked.html"));
+
+    const findings = auditDirectory(sub);
+    assert.strictEqual(findings.length, 0);
   } finally {
     rmSync(tmp, { recursive: true, force: true });
   }

@@ -6,6 +6,7 @@ import { basename, join } from "node:path";
 import { discoverGithubRepos } from "./aurora.mjs";
 
 const VALID_AREAS = new Set(["skills", "video", "deploy", "design", "state-machines", "delegation", "cli", "security", "data"]);
+const REPO_SLUG_RE = /^[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+$/;
 
 export function parseLearnings(content) {
   const lines = content.split(/\r?\n/);
@@ -58,7 +59,7 @@ export function lintLearnings(content) {
   return { entries, errors };
 }
 
-export function ingestSimContent({ learningsPath, existingContent, incomingContent }) {
+export function ingestSimContent({ learningsPath, existingContent, incomingContent, apply = true }) {
   const { entries: newEntries, errors } = lintLearnings(incomingContent);
   if (errors.length > 0) {
     throw new Error(`cannot ingest invalid SIM file:\n- ${errors.join("\n- ")}`);
@@ -66,19 +67,27 @@ export function ingestSimContent({ learningsPath, existingContent, incomingConte
   const existingTitles = new Set(parseLearnings(existingContent).map((e) => e.title.toLowerCase()));
   const freshEntries = newEntries.filter((e) => !existingTitles.has(e.title.toLowerCase()));
   const skipped = newEntries.length - freshEntries.length;
-  if (freshEntries.length === 0) {
-    return { ingested: 0, skipped, byArea: {} };
-  }
-  const block = freshEntries.map((e) => e.raw.join("\n")).join("\n\n");
-  const sep = existingContent.endsWith("\n") ? "\n" : "\n\n";
-  const tmpPath = `${learningsPath}.tmp.${process.pid}.${Date.now()}`;
-  writeFileSync(tmpPath, `${existingContent}${sep}${block}\n`, "utf8");
-  renameSync(tmpPath, learningsPath);
   const byArea = {};
   for (const e of freshEntries) {
     byArea[e.area] = (byArea[e.area] ?? 0) + 1;
   }
-  return { ingested: freshEntries.length, skipped, byArea };
+  if (freshEntries.length === 0) {
+    return { ingested: 0, planned: 0, skipped, byArea: {}, dryRun: !apply };
+  }
+  if (!apply) {
+    return { ingested: 0, planned: freshEntries.length, skipped, byArea, dryRun: true };
+  }
+  const block = freshEntries.map((e) => e.raw.join("\n")).join("\n\n");
+  const sep = existingContent.endsWith("\n") ? "\n" : "\n\n";
+  const tmpPath = `${learningsPath}.tmp.${process.pid}.${Date.now()}`;
+  try {
+    writeFileSync(tmpPath, `${existingContent}${sep}${block}\n`, "utf8");
+    renameSync(tmpPath, learningsPath);
+  } catch (err) {
+    rmSync(tmpPath, { force: true });
+    throw err;
+  }
+  return { ingested: freshEntries.length, planned: freshEntries.length, skipped, byArea, dryRun: false };
 }
 
 function defaultExecRunner(cmd, args, options = {}) {
@@ -90,14 +99,18 @@ export async function encorePush({
   srcPath,
   repoSlug,
   autoMerge = false,
+  apply = false,
   execRunner = defaultExecRunner,
 }) {
   const resolvedRepo = repoSlug ?? process.env.UIKA_ESTATE_REPO;
   if (!resolvedRepo) {
-    throw new Error("usage: encore push <file> --repo <owner/name> [--auto-merge] (or set UIKA_ESTATE_REPO)");
+    throw new Error("usage: encore push <file> --repo <owner/name> [--auto-merge] [--apply] (or set UIKA_ESTATE_REPO)");
+  }
+  if (!REPO_SLUG_RE.test(resolvedRepo)) {
+    throw new Error(`Invalid repository slug "${resolvedRepo}": expected <owner>/<name>`);
   }
   if (!srcPath || !existsSync(srcPath)) {
-    throw new Error("usage: encore push <file> --repo <owner/name> [--auto-merge] (or set UIKA_ESTATE_REPO)");
+    throw new Error("usage: encore push <file> --repo <owner/name> [--auto-merge] [--apply] (or set UIKA_ESTATE_REPO)");
   }
   const incoming = readFileSync(srcPath, "utf8");
   const { entries: validEntries, errors } = lintLearnings(incoming);
@@ -105,7 +118,10 @@ export async function encorePush({
     throw new Error(`cannot push invalid SIM file:\n- ${errors.join("\n- ")}`);
   }
   if (validEntries.length === 0) {
-    return { ok: true, pushed: 0, skipped: 0, prUrl: null };
+    return { ok: true, dryRun: !apply, pushed: 0, planned: 0, skipped: 0, prUrl: null };
+  }
+  if (!apply) {
+    return { ok: true, dryRun: true, pushed: 0, planned: validEntries.length, skipped: 0, prUrl: null };
   }
 
   const tmpRoot = mkdtempSync(join(tmpdir(), "uika-encore-push-"));
@@ -115,14 +131,20 @@ export async function encorePush({
 
   try {
     execRunner("gh", ["repo", "clone", resolvedRepo, estateDir, "--", "--depth", "1"]);
+    let defaultBranch = "main";
+    try {
+      const branchOut = execRunner("git", ["-C", estateDir, "symbolic-ref", "--short", "HEAD"]);
+      if (branchOut && branchOut.trim()) defaultBranch = branchOut.trim();
+    } catch {}
+
     const targetLearnings = join(estateDir, "register", "LEARNINGS.md");
     if (!existsSync(targetLearnings)) {
       throw new Error(`Target repo ${resolvedRepo} lacks register/LEARNINGS.md`);
     }
     const existingContent = readFileSync(targetLearnings, "utf8");
-    const res = ingestSimContent({ learningsPath: targetLearnings, existingContent, incomingContent: incoming });
+    const res = ingestSimContent({ learningsPath: targetLearnings, existingContent, incomingContent: incoming, apply: true });
     if (res.ingested === 0) {
-      return { ok: true, pushed: 0, skipped: res.skipped, prUrl: null };
+      return { ok: true, dryRun: false, pushed: 0, skipped: res.skipped, prUrl: null };
     }
 
     execRunner("git", ["-C", estateDir, "checkout", "-B", branch]);
@@ -132,7 +154,7 @@ export async function encorePush({
 
     const existingPr = execRunner("gh", ["pr", "list", "--repo", resolvedRepo, "--head", branch, "--state", "open", "--json", "url", "--jq", ".[0].url"]).trim();
     const prUrl = existingPr || execRunner("gh", [
-      "pr", "create", "--repo", resolvedRepo, "--base", "main", "--head", branch,
+      "pr", "create", "--repo", resolvedRepo, "--base", defaultBranch, "--head", branch,
       "--title", `chore(encore): ingest SIM learnings from ${sourceRepo}`,
       "--body", `Automated Encore SIM learning sync from \`${sourceRepo}\` (${res.ingested} new entries, ${res.skipped} duplicate(s) skipped).`,
     ]).trim();
@@ -150,7 +172,7 @@ export async function encorePush({
       }
     }
 
-    return { ok: true, pushed: res.ingested, skipped: res.skipped, prUrl, merged };
+    return { ok: true, dryRun: false, pushed: res.ingested, skipped: res.skipped, prUrl, merged };
   } finally {
     rmSync(tmpRoot, { recursive: true, force: true });
   }
@@ -160,12 +182,13 @@ export async function encorePullGithub({
   root,
   repos,
   owner,
+  apply = false,
   execRunner = defaultExecRunner,
 }) {
   const resolvedOwner = owner ?? process.env.UIKA_GITHUB_OWNER;
   const learningsPath = join(root, "register", "LEARNINGS.md");
   if (!existsSync(learningsPath)) {
-    throw new Error("No register/LEARNINGS.md found in Uika root");
+    throw new Error("No register/LEARNINGS.md found in estate root");
   }
   if ((!repos || repos.length === 0) && !resolvedOwner) {
     throw new Error("encore pull-github requires --owner <owner> (or UIKA_GITHUB_OWNER) or qualified --repos owner/name");
@@ -174,10 +197,8 @@ export async function encorePullGithub({
   if (!repoList || repoList.length === 0) {
     throw new Error("encore pull-github requires --owner <owner> (or UIKA_GITHUB_OWNER) or qualified --repos owner/name");
   }
-  let totalIngested = 0;
-  let totalSkipped = 0;
-  const repoResults = [];
 
+  const slugs = [];
   for (const rawName of repoList) {
     const trimmed = rawName.trim();
     if (!trimmed) continue;
@@ -185,6 +206,18 @@ export async function encorePullGithub({
       throw new Error("encore pull-github requires --owner <owner> (or UIKA_GITHUB_OWNER) or qualified --repos owner/name");
     }
     const slug = trimmed.includes("/") ? trimmed : `${resolvedOwner}/${trimmed}`;
+    if (!REPO_SLUG_RE.test(slug)) {
+      throw new Error(`Invalid repository slug "${slug}": expected <owner>/<name>`);
+    }
+    slugs.push(slug);
+  }
+
+  let totalIngested = 0;
+  let totalPlanned = 0;
+  let totalSkipped = 0;
+  const repoResults = [];
+
+  for (const slug of slugs) {
     let fetched = null;
     for (const candidate of ["register/LEARNINGS.md", "LEARNINGS.md"]) {
       try {
@@ -196,35 +229,45 @@ export async function encorePullGithub({
       } catch {}
     }
     if (!fetched || !fetched.includes("<!-- encore:sim -->")) {
-      repoResults.push({ repo: slug, ingested: 0, skipped: 0, status: "no-sim" });
+      repoResults.push({ repo: slug, ingested: 0, planned: 0, skipped: 0, status: "no-sim" });
       continue;
     }
     const current = readFileSync(learningsPath, "utf8");
     try {
-      const res = ingestSimContent({ learningsPath, existingContent: current, incomingContent: fetched });
+      const res = ingestSimContent({ learningsPath, existingContent: current, incomingContent: fetched, apply });
       totalIngested += res.ingested;
+      totalPlanned += res.planned;
       totalSkipped += res.skipped;
-      repoResults.push({ repo: slug, ingested: res.ingested, skipped: res.skipped, status: res.ingested ? "ingested" : "up-to-date" });
+      const status = apply
+        ? (res.ingested ? "ingested" : "up-to-date")
+        : (res.planned ? "planned" : "up-to-date");
+      repoResults.push({ repo: slug, ingested: res.ingested, planned: res.planned, skipped: res.skipped, status });
     } catch (err) {
-      repoResults.push({ repo: slug, ingested: 0, skipped: 0, status: "invalid", error: err.message });
+      repoResults.push({ repo: slug, ingested: 0, planned: 0, skipped: 0, status: "invalid", error: err.message });
     }
   }
 
-  return { ok: true, totalIngested, totalSkipped, repoResults };
+  const hasInvalid = repoResults.some((r) => r.status === "invalid");
+  return { ok: !hasInvalid, dryRun: !apply, totalIngested, totalPlanned, totalSkipped, repoResults };
 }
 
-export async function encore({ root, rest, opts }) {
+export async function encore({ root, rest, apply = false, opts = {} }) {
   const [sub = "list", filterAreaArg] = rest;
+  const isApply = Boolean(apply || opts?.apply);
 
   if (sub === "push") {
     const srcPath = filterAreaArg ?? (existsSync(join(root, "register", "LEARNINGS.md")) ? join(root, "register", "LEARNINGS.md") : join(root, "LEARNINGS.md"));
     const repoSlug = opts?.repo ?? process.env.UIKA_ESTATE_REPO;
     if (!repoSlug) {
-      throw new Error("usage: encore push <file> --repo <owner/name> [--auto-merge] (or set UIKA_ESTATE_REPO)");
+      throw new Error("usage: encore push <file> --repo <owner/name> [--auto-merge] [--apply] (or set UIKA_ESTATE_REPO)");
     }
     const autoMerge = Boolean(opts?.["auto-merge"]);
-    const res = await encorePush({ root, srcPath, repoSlug, autoMerge });
-    console.log(`Encore push (${repoSlug}): ${res.pushed} pushed, ${res.skipped} duplicate(s) skipped${res.prUrl ? ` -> ${res.prUrl}` : ""}.`);
+    const res = await encorePush({ root, srcPath, repoSlug, autoMerge, apply: isApply });
+    if (!isApply) {
+      console.log(`Encore push dry run (${repoSlug}): would push ${res.planned} SIM entry(s); pass --apply to write.`);
+    } else {
+      console.log(`Encore push (${repoSlug}): ${res.pushed} pushed, ${res.skipped} duplicate(s) skipped${res.prUrl ? ` -> ${res.prUrl}` : ""}.`);
+    }
     return res;
   }
 
@@ -244,11 +287,16 @@ export async function encore({ root, rest, opts }) {
     if ((!repos || repos.length === 0) && !owner) {
       throw new Error("encore pull-github requires --owner <owner> (or UIKA_GITHUB_OWNER) or qualified --repos owner/name");
     }
-    const res = await encorePullGithub({ root, repos, owner });
-    console.log(`Encore pull-github complete: ${res.totalIngested} ingested, ${res.totalSkipped} duplicate(s) skipped.`);
+    const res = await encorePullGithub({ root, repos, owner, apply: isApply });
+    if (!isApply) {
+      console.log(`Encore pull-github dry run: would ingest ${res.totalPlanned}, ${res.totalSkipped} duplicate(s) skipped; pass --apply to write.`);
+    } else {
+      console.log(`Encore pull-github complete: ${res.totalIngested} ingested, ${res.totalSkipped} duplicate(s) skipped.`);
+    }
     for (const r of res.repoResults) {
-      if (r.ingested > 0 || r.status === "invalid") {
-        console.log(`  [${r.status}] ${r.repo}: +${r.ingested}${r.error ? ` (${r.error})` : ""}`);
+      if (r.ingested > 0 || r.planned > 0 || r.status === "invalid") {
+        const count = isApply ? r.ingested : r.planned;
+        console.log(`  [${r.status}] ${r.repo}: +${count}${r.error ? ` (${r.error})` : ""}`);
       }
     }
     return res;
@@ -323,32 +371,21 @@ export async function encore({ root, rest, opts }) {
   if (sub === "ingest") {
     const srcPath = filterAreaArg;
     if (!srcPath || !existsSync(srcPath)) {
-      throw new Error("usage: encore ingest <file>");
+      throw new Error("usage: encore ingest <file> [--apply]");
     }
     const incoming = readFileSync(srcPath, "utf8");
-    const { entries: newEntries, errors } = lintLearnings(incoming);
-    if (errors.length > 0) {
-      throw new Error(`cannot ingest invalid SIM file:\n- ${errors.join("\n- ")}`);
+    const res = ingestSimContent({ learningsPath, existingContent: content, incomingContent: incoming, apply: isApply });
+    if (!isApply) {
+      console.log(`Encore ingest dry run: would ingest ${res.planned} SIM entries into register/LEARNINGS.md (${res.skipped} duplicate(s) skipped); pass --apply to write.`);
+      return { ok: true, dryRun: true, ingested: 0, planned: res.planned, skipped: res.skipped, byArea: res.byArea };
     }
-    const existingTitles = new Set(parseLearnings(content).map((e) => e.title.toLowerCase()));
-    const freshEntries = newEntries.filter((e) => !existingTitles.has(e.title.toLowerCase()));
-    const skipped = newEntries.length - freshEntries.length;
-    if (freshEntries.length === 0) {
-      console.log(`Encore ingest found 0 new SIM entries (${skipped} duplicate(s) skipped).`);
-      return { ok: true, ingested: 0, skipped, byArea: {} };
+    if (res.ingested === 0) {
+      console.log(`Encore ingest found 0 new SIM entries (${res.skipped} duplicate(s) skipped).`);
+      return { ok: true, dryRun: false, ingested: 0, skipped: res.skipped, byArea: {} };
     }
-    const block = freshEntries.map((e) => e.raw.join("\n")).join("\n\n");
-    const sep = content.endsWith("\n") ? "\n" : "\n\n";
-    const tmpPath = `${learningsPath}.tmp.${process.pid}.${Date.now()}`;
-    writeFileSync(tmpPath, `${content}${sep}${block}\n`, "utf8");
-    renameSync(tmpPath, learningsPath);
-    const byArea = {};
-    for (const e of freshEntries) {
-      byArea[e.area] = (byArea[e.area] ?? 0) + 1;
-    }
-    console.log(`Encore ingested ${freshEntries.length} SIM entries into register/LEARNINGS.md (${skipped} duplicate(s) skipped).`);
-    return { ok: true, ingested: freshEntries.length, skipped, byArea };
+    console.log(`Encore ingested ${res.ingested} SIM entries into register/LEARNINGS.md (${res.skipped} duplicate(s) skipped).`);
+    return { ok: true, dryRun: false, ingested: res.ingested, skipped: res.skipped, byArea: res.byArea };
   }
 
-  throw new Error("usage: encore list [area] [--skill <name>] [--json] | lint | ingest <file> | summary [--json]");
+  throw new Error("usage: encore list [area] [--skill <name>] [--json] | summary [--json] | lint | ingest <file> [--apply] | push <file> --repo <owner/name> [--auto-merge] [--apply] | pull-github --owner <owner> | --repos <a,b> [--apply]");
 }

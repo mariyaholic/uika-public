@@ -114,9 +114,9 @@ if (!run || values.help) {
   ref ls [--kind k] | show <id> | hash <id> [--json] | check — read-only reference views and integrity checks
   eval ls | run [--split train|test|all] [--n 3] [--out f] [--apply] | compare <before> <after> — local eval harness for hillclimbing
   manuscriptus check | next [--scan-refs] — ADR numbering, section validation, plain-prose lint & relative link check
-  encore list [area] [--skill name] [--json] | summary [--json] | lint | ingest <file> | push <file> --repo owner/name [--auto-merge] | pull-github --owner owner | --repos a,b — SIM learnings manager
+  encore list [area] [--skill name] [--json] | summary [--json] | lint | ingest <file> [--apply] | push <file> --repo owner/name [--auto-merge] [--apply] | pull-github --owner owner | --repos a,b [--apply] — SIM learnings manager
   aurora sync [--apply] [--force] [--strict-paths] | propagate (--target dir | --github | --all [--repos a,b] [--owner owner] [--auto-merge]) [--apply] [--force] — estate sync & cross-repo propagation
-  ferry status|plan|stage|restore — heavy temp/cache artifact deferral with SHA-256 verification
+  ferry status|plan|stage [--apply]|restore [--apply] — heavy temp/cache artifact deferral with SHA-256 verification
   unmask check [dir] [--json] [--include-vendor] — UI interactibility & implicit state-machine auditor
 
 Not bundled (see docs/roadmap.md): usage tracker, mcp/models/pot/prompt registries, supply,

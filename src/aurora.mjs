@@ -29,6 +29,17 @@ function extractLatestHandoff(text) {
   return block.length >= 2 ? block.join("\n") : null;
 }
 
+function atomicWrite(filePath, content) {
+  const tmp = `${filePath}.tmp.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 8)}`;
+  try {
+    writeFileSync(tmp, content, "utf8");
+    renameSync(tmp, filePath);
+  } catch (err) {
+    rmSync(tmp, { force: true });
+    throw err;
+  }
+}
+
 export async function propagateRepo({ root, targetDir, apply = false, force = false }) {
   const absTarget = resolve(targetDir);
   if (!existsSync(absTarget)) {
@@ -57,8 +68,8 @@ export async function propagateRepo({ root, targetDir, apply = false, force = fa
           handoff || "No active handoff block recorded; see WORKSTACK-FULL.md for historical context.",
           "",
         ];
-        renameSync(workstackPath, fullWorkstackPath);
-        writeFileSync(workstackPath, setlistLines.join("\n"), "utf8");
+        atomicWrite(fullWorkstackPath, raw);
+        atomicWrite(workstackPath, setlistLines.join("\n"));
       }
     }
   }
@@ -72,7 +83,7 @@ export async function propagateRepo({ root, targetDir, apply = false, force = fa
       const rel = learningsPath.slice(absTarget.length + 1).replace(/\\/g, "/");
       changes.push({ kind: "encore-sim-header", file: rel, detail: `Prepend Encore SIM schema header to ${rel}` });
       if (apply) {
-        writeFileSync(learningsPath, `${ENCORE_SIM_HEADER}${raw}`, "utf8");
+        atomicWrite(learningsPath, `${ENCORE_SIM_HEADER}${raw}`);
       }
     }
   }
@@ -124,8 +135,9 @@ export async function propagateGithub({
         continue;
       }
 
-      const repoName = slug.split("/")[1];
-      const repoDir = join(workRoot, repoName);
+      const [repoOwner, repoName] = slug.split("/");
+      const safeDirName = `${repoOwner}__${repoName}`.replace(/[^A-Za-z0-9._-]+/g, "_");
+      const repoDir = join(workRoot, safeDirName);
 
       try {
         execRunner("gh", ["repo", "clone", slug, repoDir, "--", "--depth", "1"]);

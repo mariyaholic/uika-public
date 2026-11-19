@@ -1,6 +1,6 @@
 // manuscriptus.mjs — ADR numbering & markdown linter (uika manuscriptus check|next)
 import { readFileSync, existsSync, readdirSync } from "node:fs";
-import { join, relative } from "node:path";
+import { join, relative, resolve, sep } from "node:path";
 import { execFileSync } from "node:child_process";
 
 export function lintPlainProse(content, filename) {
@@ -159,13 +159,24 @@ export function parseAdrs(root) {
     if (!hasDecision) errors.push(`${file}: missing "Decision" section`);
     if (!hasConsequences) errors.push(`${file}: missing "Consequences" section`);
 
+    const absRoot = resolve(root);
+    const isInsideRoot = (p) => {
+      const r = relative(absRoot, p);
+      return r === "" || (!r.startsWith("..") && !r.startsWith(sep) && !/^[A-Za-z]:/.test(r));
+    };
+    const linkScanContent = content
+      .replace(/```[\s\S]*?```/g, "")
+      .replace(/~~~[\s\S]*?~~~/g, "");
     const linkRegex = /\[([^\]]+)\]\((?!http|mailto|#)([^)]+)\)/g;
     let linkMatch;
-    while ((linkMatch = linkRegex.exec(content)) !== null) {
+    while ((linkMatch = linkRegex.exec(linkScanContent)) !== null) {
       const linkTarget = linkMatch[2].split("#")[0];
       if (linkTarget) {
-        const targetPath = join(adrDir, linkTarget);
-        if (!existsSync(targetPath) && !existsSync(join(root, linkTarget))) {
+        const fromAdr = resolve(adrDir, linkTarget);
+        const fromRoot = resolve(absRoot, linkTarget);
+        const validAdr = isInsideRoot(fromAdr) && existsSync(fromAdr);
+        const validRoot = isInsideRoot(fromRoot) && existsSync(fromRoot);
+        if (!validAdr && !validRoot) {
           errors.push(`${file}: broken relative link "${linkMatch[2]}"`);
         }
       }

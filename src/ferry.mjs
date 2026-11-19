@@ -1,15 +1,50 @@
-// ferry.mjs — Google Drive temp/cache deferral helper (uika ferry stage|plan|status|restore)
+// ferry.mjs — Google Drive temp/cache deferral helper (uika ferry status|plan|stage|restore)
 import { createHash, randomBytes } from "node:crypto";
-import { existsSync, readdirSync, lstatSync, statSync, mkdirSync, cpSync, rmSync, writeFileSync, readFileSync, renameSync } from "node:fs";
-import { join, relative, resolve, dirname, sep } from "node:path";
+import { existsSync, readdirSync, lstatSync, statSync, mkdirSync, cpSync, rmSync, writeFileSync, readFileSync, renameSync, realpathSync } from "node:fs";
+import { join, relative, resolve, dirname, basename, sep } from "node:path";
 import { execFileSync } from "node:child_process";
 
 function sha256File(filePath) {
   return createHash("sha256").update(readFileSync(filePath)).digest("hex");
 }
 
-function isInsideDir(baseDir, targetPath) {
+function realAncestor(targetPath) {
+  let cur = resolve(targetPath);
+  const tail = [];
+  while (true) {
+    const st = lstatSync(cur, { throwIfNoEntry: false });
+    if (st) {
+      if (st.isSymbolicLink()) return null;
+      return join(realpathSync(cur), ...tail);
+    }
+    const parent = dirname(cur);
+    if (parent === cur) break;
+    tail.unshift(basename(cur));
+    cur = parent;
+  }
+  return resolve(targetPath);
+}
+
+function assertNoChildSymlinks(baseDir, targetPath) {
   const rel = relative(resolve(baseDir), resolve(targetPath));
+  if (!rel || rel.startsWith("..") || rel.startsWith(sep) || /^[A-Za-z]:/.test(rel)) return;
+  let cur = resolve(baseDir);
+  for (const part of rel.split(sep).filter(Boolean)) {
+    cur = join(cur, part);
+    const st = lstatSync(cur, { throwIfNoEntry: false });
+    if (st?.isSymbolicLink()) {
+      throw new Error(`Unsafe symlink along destination path: ${cur}`);
+    }
+  }
+}
+
+function isInsideDir(baseDir, targetPath) {
+  const baseSt = lstatSync(resolve(baseDir), { throwIfNoEntry: false });
+  if (baseSt?.isSymbolicLink()) return false;
+  const realBase = realAncestor(baseDir);
+  const realTarget = realAncestor(targetPath);
+  if (!realBase || !realTarget) return false;
+  const rel = relative(realBase, realTarget);
   return rel !== "" && !rel.startsWith("..") && !rel.startsWith(sep) && !/^[A-Za-z]:/.test(rel);
 }
 
@@ -80,14 +115,15 @@ export function checkGitignoreSafety(root, driveRoot) {
   }
 }
 
-export async function ferry({ root, rest, opts }) {
+export async function ferry({ root, rest, apply = false, opts = {} }) {
   const [sub = "status"] = rest;
+  const isApply = Boolean(apply || opts?.apply);
   const driveRoot = resolve(process.env.UIKA_DRIVE_ROOT || join(root, ".ferry_cache"));
 
   if (sub === "status" || sub === "plan") {
     const isIgnored = checkGitignoreSafety(root, driveRoot);
     if (!isIgnored) {
-      console.log(`[warning] Drive cache directory "${relative(root, driveRoot) || '.ferry_cache'}" is not listed in .gitignore!`);
+      console.log(`[warning] Drive cache directory "${relative(root, driveRoot) || ".ferry_cache"}" is not listed in .gitignore!`);
     }
     const heavy = scanHeavyArtifacts(root, { ...opts, skipRoot: driveRoot });
     console.log(`Ferry found ${heavy.length} deferred artifact candidates.`);
@@ -98,15 +134,42 @@ export async function ferry({ root, rest, opts }) {
   }
 
   if (sub === "stage") {
+    const driveFolderId = process.env.UIKA_DRIVE_FOLDER_ID;
+    if (driveFolderId && !/^[A-Za-z0-9_-]+$/.test(driveFolderId)) {
+      throw new Error(`Invalid UIKA_DRIVE_FOLDER_ID format: ${driveFolderId}`);
+    }
+
     const isIgnored = checkGitignoreSafety(root, driveRoot);
     if (!isIgnored) {
-      console.log(`[warning] Drive cache directory is not in .gitignore. Continuing.`);
+      console.log("[warning] Drive cache directory is not in .gitignore. Continuing.");
     }
 
     const heavy = scanHeavyArtifacts(root, { ...opts, skipRoot: driveRoot });
+    for (const h of heavy) {
+      const dest = resolve(driveRoot, h.path);
+      assertNoChildSymlinks(driveRoot, dest);
+      if (!isInsideDir(driveRoot, dest)) {
+        throw new Error(`Unsafe stage destination outside drive root: ${h.path}`);
+      }
+    }
+
+    if (!isApply) {
+      console.log(`dry run: would stage ${heavy.length} artifact(s) to ${driveRoot}`);
+      for (const h of heavy) {
+        console.log(`  would stage ${h.path} (${(h.size / (1024 * 1024)).toFixed(2)} MB)`);
+      }
+      console.log("dry run; add --apply to stage");
+      return { ok: true, dryRun: true, staged: 0, planned: heavy.length, candidates: heavy, driveRoot };
+    }
+
     mkdirSync(driveRoot, { recursive: true });
 
     const manifestPath = join(driveRoot, "manifest.json");
+    const manifestSt = lstatSync(manifestPath, { throwIfNoEntry: false });
+    if (manifestSt?.isSymbolicLink()) {
+      throw new Error(`Unsafe symlink at ferry manifest: ${manifestPath}`);
+    }
+
     let existingItems = [];
     if (existsSync(manifestPath)) {
       try {
@@ -120,14 +183,30 @@ export async function ferry({ root, rest, opts }) {
     const stagedItems = [];
     for (const h of heavy) {
       const srcHash = sha256File(h.fullPath);
-      let dest = join(driveRoot, h.path);
+      let dest = resolve(driveRoot, h.path);
+      assertNoChildSymlinks(driveRoot, dest);
+      if (!isInsideDir(driveRoot, dest)) {
+        throw new Error(`Unsafe stage destination outside drive root: ${h.path}`);
+      }
       let needCopy = true;
-      if (existsSync(dest)) {
+      const destSt = lstatSync(dest, { throwIfNoEntry: false });
+      if (destSt?.isSymbolicLink()) {
+        throw new Error(`Unsafe symlink at stage destination: ${dest}`);
+      }
+      if (destSt) {
         const destHash = sha256File(dest);
         if (destHash === srcHash) {
           needCopy = false;
         } else {
-          dest = join(driveRoot, `${h.path}.${srcHash.slice(0, 8)}`);
+          dest = resolve(driveRoot, `${h.path}.${srcHash.slice(0, 8)}`);
+          assertNoChildSymlinks(driveRoot, dest);
+          if (!isInsideDir(driveRoot, dest)) {
+            throw new Error(`Unsafe stage destination outside drive root: ${h.path}`);
+          }
+          const altSt = lstatSync(dest, { throwIfNoEntry: false });
+          if (altSt?.isSymbolicLink()) {
+            throw new Error(`Unsafe symlink at stage destination: ${dest}`);
+          }
         }
       }
       if (needCopy) {
@@ -152,19 +231,20 @@ export async function ferry({ root, rest, opts }) {
       items: [...byPath.values()],
     };
     const tmpManifest = `${manifestPath}.tmp.${process.pid}.${randomBytes(4).toString("hex")}`;
-    writeFileSync(tmpManifest, JSON.stringify(merged, null, 2), "utf8");
-    renameSync(tmpManifest, manifestPath);
+    try {
+      writeFileSync(tmpManifest, JSON.stringify(merged, null, 2), "utf8");
+      renameSync(tmpManifest, manifestPath);
+    } catch (err) {
+      rmSync(tmpManifest, { force: true });
+      throw err;
+    }
 
     for (const item of stagedItems) {
       rmSync(item.fullPath);
     }
 
-    const driveFolderId = process.env.UIKA_DRIVE_FOLDER_ID;
     const runner = opts?.execRunner;
     if (driveFolderId) {
-      if (!/^[A-Za-z0-9_-]+$/.test(driveFolderId)) {
-        throw new Error(`Invalid UIKA_DRIVE_FOLDER_ID format: ${driveFolderId}`);
-      }
       try {
         const filesToUpload = [manifestPath, ...stagedItems.map((i) => join(driveRoot, i.dest))];
         if (runner) {
@@ -189,14 +269,14 @@ export async function ferry({ root, rest, opts }) {
     }
 
     console.log(`Ferry staged ${stagedItems.length} artifacts to ${driveRoot}`);
-    return { ok: true, staged: stagedItems.length, driveRoot };
+    return { ok: true, dryRun: false, staged: stagedItems.length, driveRoot };
   }
 
   if (sub === "restore") {
     const manifestPath = join(driveRoot, "manifest.json");
     if (!existsSync(manifestPath)) {
       console.log("No Ferry manifest found in drive root.");
-      return { ok: true, restored: 0 };
+      return { ok: true, dryRun: !isApply, restored: 0, planned: 0 };
     }
 
     let manifest;
@@ -207,18 +287,28 @@ export async function ferry({ root, rest, opts }) {
     }
 
     const items = manifest.items ?? [];
-    let restoredCount = 0;
+    const toRestore = [];
     for (const item of items) {
       const srcDest = resolve(driveRoot, item.dest ?? item.path);
       const targetPath = resolve(root, item.path);
+      assertNoChildSymlinks(driveRoot, srcDest);
+      assertNoChildSymlinks(root, targetPath);
       if (!isInsideDir(driveRoot, srcDest) || !isInsideDir(root, targetPath)) {
         throw new Error(`Path traversal rejected during ferry restore for "${item.path}"`);
       }
-      if (!existsSync(srcDest)) {
+      const targetSt = lstatSync(targetPath, { throwIfNoEntry: false });
+      if (targetSt?.isSymbolicLink()) {
+        throw new Error(`Unsafe symlink at restore destination: ${item.path}`);
+      }
+      const srcSt = lstatSync(srcDest, { throwIfNoEntry: false });
+      if (srcSt?.isSymbolicLink()) {
+        throw new Error(`Unsafe symlink at staged source: ${item.path}`);
+      }
+      if (!srcSt) {
         console.log(`[warning] Staged artifact missing in drive cache: ${item.path}`);
         continue;
       }
-      if (existsSync(targetPath) && !opts?.force) {
+      if (targetSt && !opts?.force) {
         console.log(`[skip] Local file already exists at ${item.path} (pass --force to overwrite)`);
         continue;
       }
@@ -226,14 +316,28 @@ export async function ferry({ root, rest, opts }) {
       if (actualHash !== item.sha256) {
         throw new Error(`SHA-256 mismatch on restore for ${item.path}: expected ${item.sha256}, got ${actualHash}`);
       }
+      toRestore.push({ item, srcDest, targetPath });
+    }
+
+    if (!isApply) {
+      console.log(`dry run: would restore ${toRestore.length} artifact(s) from ${driveRoot}`);
+      for (const r of toRestore) {
+        console.log(`  would restore ${r.item.path}`);
+      }
+      console.log("dry run; add --apply to restore");
+      return { ok: true, dryRun: true, restored: 0, planned: toRestore.length };
+    }
+
+    let restoredCount = 0;
+    for (const { srcDest, targetPath } of toRestore) {
       mkdirSync(dirname(targetPath), { recursive: true });
       cpSync(srcDest, targetPath);
       restoredCount++;
     }
 
     console.log(`Ferry restored ${restoredCount} artifacts from ${driveRoot}`);
-    return { ok: true, restored: restoredCount };
+    return { ok: true, dryRun: false, restored: restoredCount };
   }
 
-  throw new Error("usage: ferry status|plan|stage|restore");
+  throw new Error("usage: ferry status|plan|stage [--apply]|restore [--apply]");
 }

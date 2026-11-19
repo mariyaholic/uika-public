@@ -103,3 +103,27 @@ test("getNextAdrNumber with scanRefs discovers unmerged branch ADRs", () => {
     rmSync(tmp, { recursive: true, force: true });
   }
 });
+
+test("parseAdrs ignores links inside fenced code blocks and rejects links escaping root", () => {
+  const tmp = mkdtempSync(join(tmpdir(), "uika-manuscriptus-links-"));
+  try {
+    const adrDir = join(tmp, "register/adr");
+    mkdirSync(adrDir, { recursive: true });
+    writeFileSync(join(tmp, "README.md"), "# Root\n", "utf8");
+    writeFileSync(
+      join(adrDir, "ADR-0002-links.md"),
+      "# ADR-0002: Links\n\nDate: 2026-11-18 · Status: accepted\n\n## Context\nSee [readme](../../README.md).\n```md\n[ignored](nonexistent.md)\n```\n\n## Decision\nD\n\n## Consequences\nC\n"
+    );
+    const clean = parseAdrs(tmp);
+    assert.strictEqual(clean.errors.length, 0);
+
+    writeFileSync(
+      join(adrDir, "ADR-0003-escape.md"),
+      "# ADR-0003: Escape\n\nDate: 2026-11-18 · Status: accepted\n\n## Context\nSee [escape](../../../outside.md).\n\n## Decision\nD\n\n## Consequences\nC\n"
+    );
+    const escaped = parseAdrs(tmp);
+    assert.ok(escaped.errors.some((e) => e.includes("broken relative link")));
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+});

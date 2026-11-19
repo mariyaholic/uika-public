@@ -1,5 +1,5 @@
 // unmask.mjs — Implicit state-machine & UI interactibility auditor (uika unmask check [dir] [--json])
-import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync, lstatSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 export function auditFile(content, filename) {
@@ -62,8 +62,9 @@ export function auditDirectory(dir, { includeVendor = false } = {}) {
   const findings = [];
   if (!existsSync(dir)) return findings;
 
-  const stRoot = statSync(dir, { throwIfNoEntry: false });
-  if (stRoot?.isFile()) {
+  const stRoot = lstatSync(dir, { throwIfNoEntry: false });
+  if (!stRoot || stRoot.isSymbolicLink()) return findings;
+  if (stRoot.isFile()) {
     try {
       return auditFile(readFileSync(dir, "utf8"), dir);
     } catch {
@@ -89,10 +90,11 @@ export function auditDirectory(dir, { includeVendor = false } = {}) {
       const full = join(currentDir, e);
       let st;
       try {
-        st = statSync(full);
+        st = lstatSync(full);
       } catch {
         continue;
       }
+      if (st.isSymbolicLink()) continue;
       if (st.isDirectory()) {
         walk(full);
       } else if (/\.(html|js|ts|mjs)$/i.test(e)) {
