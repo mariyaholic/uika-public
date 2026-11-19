@@ -45,7 +45,7 @@ manifest fields, the law-block format, and harness mappings may change before 1.
   against a private estate directory. Explicit `--root` takes precedence over the environment; if
   neither is set, the current working directory remains the root.
 
-Every command takes `--help`. Exit codes: `0` ok, `1` command error, `2` usage/help.
+Every command takes `--help`. Exit codes: `0` ok, `1` command error, `2` usage/help. Core estate commands also include `check` (probe runtimes and harness homes), `audit [repo]` (report variant-suffixed script clusters), `path <kind> <name>` (resolve canonical locations), and `layout [dir]` (scan directory structure).
 
 ### Media, figures, references and evals
 
@@ -75,14 +75,24 @@ uika depends on them, and each one checks for its external tool before doing any
   environment, or provider versions. Keep those fixed and review their provenance separately.
   Output directories must already exist; result files are replaced atomically after execution.
 
+### Governance, SIM learnings, propagation, deferral and UI audits
+
+Five additional subsystems support ADR governance, structured learnings, cross-repo propagation, heavy-artifact deferral, and UI interactibility checks:
+
+- `uika manuscriptus check|next [--scan-refs]` validates ADR filenames, `Context`/`Decision`/`Consequences` sections, relative links, and plain-prose warnings (`docs/` and `register/guidebooks/`), and computes the next unreserved ADR number across local files and Git refs (`--scan-refs`).
+- `uika encore list [area] [--skill name] [--json] | summary [--json] | lint | ingest <file> | push <file> --repo owner/name [--auto-merge] | pull-github --owner owner | --repos a,b` manages Structured Incident Memory (`SIM`) entries in `register/LEARNINGS.md`. Cloud `push` and `pull-github` require an explicit `--repo` / `--owner` / `--repos` (or `UIKA_ESTATE_REPO` / `UIKA_GITHUB_OWNER`).
+- `uika aurora sync [--apply] [--force] [--strict-paths] | propagate (--target dir | --github | --all [--repos a,b] [--owner owner] [--auto-merge]) [--apply] [--force]` checks estate drift across manifest targets, skill homes, and home-law files, and propagates Setlist `WORKSTACK.md` splits, Encore SIM headers, and law blocks.
+- `uika ferry status|plan|stage|restore` scans heavy or stale temp/cache artifacts, stages them into `UIKA_DRIVE_ROOT` (or `.ferry_cache`) with SHA-256 manifest verification, optionally uploads via `gdrive` when `UIKA_DRIVE_FOLDER_ID` is set, and restores with path-traversal and hash checks.
+- `uika unmask check [dir...] [--json] [--include-vendor]` audits HTML/JS/TS/MJS files for inert buttons, `href="#"` placeholders, `pointer-events: none` traps on controls, unguarded async listeners, missing `:focus-visible` rules, and missing `prefers-reduced-motion` guards.
+
 ## Part 3 — The law block and the markdown standard
 
 The generated block is deliberately small: session start, handoff format, naming, branch shape,
 posture, find commands, finish ritual. It carries **only what every session must obey** — the
 full law lives in ADRs, not in the always-loaded file.
 
-Budgets (defaults, configurable): any always-loaded file ≤ 200 lines; Codex project docs
-≤ 32 KiB. `lint` enforces them as warnings; `--strict` turns them into failures in CI.
+Budgets (defaults, configurable): any always-loaded file ≤ 200 lines; `WORKSTACK.md` Setlist ≤ 120 lines; Codex project docs
+≤ 32 KiB. `lint` enforces them as warnings (skipping Windows drive paths on POSIX unless `--strict-paths` or `UIKA_STRICT_PATHS=1` is set); `--strict` turns them into failures in CI.
 
 `lint` also reads `references/library.json` when it exists. It validates every record
 and resolves reference paths without performing the full content hash. Use `ref check`

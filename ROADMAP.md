@@ -25,9 +25,9 @@ their own verification.
 
 ## Present in the source preview
 
-- [x] **Zero npm runtime dependencies:** plain ESM on Node 22+, with 19 registered commands:
+- [x] **Zero npm runtime dependencies:** plain ESM on Node 22+, with 24 registered commands:
   `init check lint sync skills audit find where path layout session adopt deploy docs home
-  video figure ref eval`.
+  video figure ref eval manuscriptus encore aurora ferry unmask`.
 - [x] **Estate bootstrap:** `uika init` creates a synthetic starting estate. Choose and copy
   bundled skills into that estate before validating or placing them.
 - [x] **Fingerprinted law blocks and docs:** adopt, render, check, initialize, migrate, and
@@ -37,7 +37,7 @@ their own verification.
 - [x] **Search and session protocol:** fuzzy file search, project nicknames, freshness checks,
   claimed handles, complete handoffs, and wrap gates.
 - [x] **Harness home-law generation:** `uika home status|regen`.
-- [x] **39 estate-authored skills:** the original 17 operating/principle skills and 22 ports,
+- [x] **40 estate-authored skills:** the original 17 operating/principle skills and 23 ports,
   including six templates with setup manuals. See
   [skills scope and provenance](docs/SKILL_PORT_AUDIT.md).
 - [x] **Media and figures:** video QA, frames/contact sheets, structure comparison and prompt

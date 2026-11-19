@@ -1,6 +1,6 @@
 // uika.mjs — dispatcher (0.1.0 preview).
 // Commands: init | check | lint | sync | skills | audit | find | where | path | layout | session | adopt | deploy | docs | home
-//           | video | figure | ref | eval
+//           | video | figure | ref | eval | manuscriptus | encore | aurora | ferry | unmask
 //
 // The usage, registry (mcp/models/pot/prompt), supply, backup, limiter and mt5 planes of the
 // estate tool are documented in docs/roadmap.md and are not bundled.
@@ -21,6 +21,11 @@ import { video } from "./video.mjs";
 import { figure } from "./figure.mjs";
 import { ref } from "./ref.mjs";
 import { evalCmd } from "./eval.mjs";
+import { manuscriptus } from "./manuscriptus.mjs";
+import { encore } from "./encore.mjs";
+import { aurora } from "./aurora.mjs";
+import { ferry } from "./ferry.mjs";
+import { unmask } from "./unmask.mjs";
 import { resolveEstateRoot } from "./targets.mjs";
 
 const argv = process.argv.slice(2);
@@ -38,6 +43,9 @@ parsed = parseArgs({
     all: { type: "boolean", default: false },
     "skills-only": { type: "boolean", default: false },
     strict: { type: "boolean", default: false },
+    "strict-paths": { type: "boolean", default: false },
+    "include-vendor": { type: "boolean", default: false },
+    "scan-refs": { type: "boolean", default: false },
     deep: { type: "boolean", default: false },
     project: { type: "string" },
     since: { type: "string" },
@@ -61,6 +69,13 @@ parsed = parseArgs({
     face: { type: "string" },
     theme: { type: "string" },
     split: { type: "string" },
+    skill: { type: "string" },
+    target: { type: "string" },
+    github: { type: "boolean", default: false },
+    repos: { type: "string" },
+    owner: { type: "string" },
+    "auto-merge": { type: "boolean", default: false },
+    repo: { type: "string" },
     help: { type: "boolean", short: "h", default: false },
   },
 });
@@ -72,7 +87,7 @@ const { positionals, values } = parsed;
 const [cmd, ...rest] = positionals;
 const root = resolveEstateRoot(values.root);
 
-const commands = { init, check, lint, sync, skills, audit, find, where, path, layout, session, adopt, deploy, docs, home, video, figure, ref, eval: evalCmd };
+const commands = { init, check, lint, sync, skills, audit, find, where, path, layout, session, adopt, deploy, docs, home, video, figure, ref, eval: evalCmd, manuscriptus, encore, aurora, ferry, unmask };
 
 const run = Object.hasOwn(commands, cmd) ? commands[cmd] : undefined;
 if (values.apply && values["dry-run"]) {
@@ -84,7 +99,7 @@ if (!run || values.help) {
   console.log(`uika <command>  (0.1.0 preview — run inside an estate directory, or pass --root <dir> / set UIKA_ESTATE_HOME)
   init [dir] [--name n] [--apply] — bootstrap a compliant new estate from scratch
   check — machine probe: runtimes, harness homes, drive space
-  lint [--strict] — context-budget linter: always-loaded file lines, law-block drift, skill hygiene (advisory; --strict exits 1 on any warning)
+  lint [--strict] [--strict-paths] — context-budget linter: always-loaded file lines, law-block drift, skill hygiene (advisory; --strict exits 1 on any warning)
   sync <repo> [--force] [--apply] — distribute estate config into a clean target repo (ADR-0003 pattern)
   skills validate|place [--apply] | audit [repo] [--deep] — skill tiers into harness homes (ADR-0015 pattern)
   find [words] [--project p] [--since 3h|2d|yesterday|YYYY-MM-DD] [--on date] [--ext md] [--n 15] | where [name] — estate search & nickname resolution (ADR-0019 pattern)
@@ -98,13 +113,21 @@ if (!run || values.help) {
   figure check <spec> | render <spec> [--formats svg,html,png,pdf] [--out dir] [--theme name | --tokens css --face night|light] [--apply] | ls [dir] | theme [name] — figure engine (png/pdf need Playwright)
   ref ls [--kind k] | show <id> | hash <id> [--json] | check — read-only reference views and integrity checks
   eval ls | run [--split train|test|all] [--n 3] [--out f] [--apply] | compare <before> <after> — local eval harness for hillclimbing
+  manuscriptus check | next [--scan-refs] — ADR numbering, section validation, plain-prose lint & relative link check
+  encore list [area] [--skill name] [--json] | summary [--json] | lint | ingest <file> [--apply] | push <file> --repo owner/name [--auto-merge] [--apply] | pull-github --owner owner | --repos a,b [--apply] — SIM learnings manager
+  aurora sync [--apply] [--force] [--strict-paths] | propagate (--target dir | --github | --all [--repos a,b] [--owner owner] [--auto-merge]) [--apply] [--force] — estate sync & cross-repo propagation
+  ferry status|plan|stage [--apply]|restore [--apply] — heavy temp/cache artifact deferral with SHA-256 verification
+  unmask check [dir] [--json] [--include-vendor] — UI interactibility & implicit state-machine auditor
 
 Not bundled (see docs/roadmap.md): usage tracker, mcp/models/pot/prompt registries, supply,
 backup, limiter, mt5.`);
   process.exit(values.help ? 0 : 2);
 }
 try {
-  await run({ root, rest, force: values.force, apply: values.apply, opts: values, argv });
+  const res = await run({ root, rest, force: values.force, apply: values.apply, opts: values, argv });
+  if (res && res.ok === false) {
+    process.exit(1);
+  }
   process.exit(0);
 } catch (err) {
   console.error(`uika ${cmd}: ${err.message}`);

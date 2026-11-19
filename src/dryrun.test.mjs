@@ -62,6 +62,19 @@ test("dry runs leave estate, targets, home and git config byte-for-byte unchange
   const evalTasks = join(f.bare, "tasks");
   mkdirSync(evalTasks);
   writeFileSync(join(evalTasks, "marker.json"), JSON.stringify({ id: "marker", split: "train", run: ["node", "-e", "require('fs').writeFileSync('ran.txt', 'x')"], cwd: f.bare }));
+  const simPatch = join(f.bare, "sim.md");
+  writeFileSync(simPatch, [
+    "### Dry run SIM entry",
+    "- **Area:** cli",
+    "- **Problem cluster:** dry-run",
+    "- **Root cause:** unguarded write",
+    "- **Rationale:** require --apply",
+    "- **Predicted vs observed:** expected dry run",
+    "- **Provenance:** dryrun-test",
+  ].join("\n"));
+  const ferryDir = join(f.s, "ferry-target");
+  mkdirSync(ferryDir);
+  writeFileSync(join(ferryDir, "heavy.bin"), Buffer.alloc(1024 * 1024 * 11));
   const cases = [
     ["init <nonexistent>", ["init", join(f.s, "fresh"), "--name", "x"], [join(f.s, "fresh")]],
     ["init <existing empty>", ["init", (mkdirSync(join(f.s, "empty")), join(f.s, "empty")), "--name", "x"], [join(f.s, "empty")]],
@@ -85,6 +98,8 @@ test("dry runs leave estate, targets, home and git config byte-for-byte unchange
     ["path log", ["path", "log", "x", "--from", "codex.impl", ...R(f.estate)]],
     ["figure render", ["figure", "render", figSpec, "--formats", "svg,html", ...R(f.estate)]],
     ["eval run", ["eval", "run", "--from", evalTasks, "--out", join(f.bare, "results.json"), ...R(f.estate)]],
+    ["encore ingest", ["encore", "ingest", simPatch, ...R(f.estate)]],
+    ["ferry stage", ["ferry", "stage", ...R(ferryDir)], [ferryDir]],
   ];
   const ran = [];
   for (const [label, args, extra = [], cwd] of cases) {

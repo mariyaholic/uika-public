@@ -31,9 +31,42 @@ const LAW_BEGIN = "<!-- uika:law:begin -->";
 const LAW_END = "<!-- uika:law:end -->";
 const exists = (p) => existsSync(p) || (existsSync(dirname(p)) && readdirSync(dirname(p)).some((f) => f.startsWith(basename(p)))); // ADR-0011 -> ADR-0011-*.md
 const read = (root, f) => { try { return readFileSync(join(root, f), "utf8"); } catch { return ""; } };
+export const isWindowsPath = (p) => typeof p === "string" && (/^[A-Za-z]:(?:[/\\]|$)/.test(p) || /^\\\\[^\\]/.test(p));
+
+export function extractCliCommands(uikaText) {
+  const cmdMatch = uikaText.match(/const commands\s*=\s*\{([\s\S]*?)\};/);
+  if (!cmdMatch) return [];
+  const body = cmdMatch[1];
+  const entries = [];
+  let cur = "";
+  let depth = 0;
+  for (let i = 0; i < body.length; i++) {
+    const ch = body[i];
+    if (ch === "(" || ch === "{" || ch === "[") depth++;
+    else if (ch === ")" || ch === "}" || ch === "]") depth = Math.max(0, depth - 1);
+    if (depth === 0 && (ch === "," || ch === "\n")) {
+      entries.push(cur);
+      cur = "";
+    } else {
+      cur += ch;
+    }
+  }
+  if (cur) entries.push(cur);
+  const keys = [];
+  for (const raw of entries) {
+    const clean = raw.replace(/\/\/.*$/, "").trim();
+    if (!clean) continue;
+    const keyMatch = clean.match(/^([A-Za-z0-9_]+)\s*(?::|$)/);
+    if (keyMatch) keys.push(keyMatch[1]);
+  }
+  return keys;
+}
 
 // Doc-drift + ADR-0014 naming checks (warnings; fatal only under --strict).
-function drift(root, warn) {
+function drift(root, warn, opts = {}) {
+  const strictPaths = Boolean(opts?.["strict-paths"] || process.env.UIKA_STRICT_PATHS === "1");
+  const skipWindows = process.platform !== "win32" && !strictPaths;
+
   // eval README checklist vs task files; vs WORKSTACK's claim
   const tdir = join(root, "labs/eval/tasks");
   const tasks = existsSync(tdir) ? readdirSync(tdir).filter((f) => /^task-\d+/.test(f)).length : 0;
@@ -59,7 +92,10 @@ function drift(root, warn) {
   // ADR-0019/0020: registered project paths exist; persona files carry a valid confidence label
   try {
     for (const [k, p] of Object.entries(JSON.parse(read(root, "projects/registry.json") || "{}").projects ?? {})) {
-      for (const path of p.paths) if (!existsSync(path)) warn(`projects/registry.json: ${k} path "${path}" does not exist`);
+      for (const path of p.paths) {
+        if (skipWindows && isWindowsPath(path)) continue;
+        if (!existsSync(path)) warn(`projects/registry.json: ${k} path "${path}" does not exist`);
+      }
     }
   } catch { warn("projects/registry.json: unreadable"); }
   const pdir = join(root, "register/personas");
@@ -70,6 +106,7 @@ function drift(root, warn) {
   // ADR-0033: adopted repos declare a distribution target whose path exists and carries the law block
   try {
     for (const t of JSON.parse(read(root, "estate.json") || "{}").estate?.distribution?.targets ?? []) {
+      if (t.path && skipWindows && isWindowsPath(t.path)) continue;
       if (t.path && !existsSync(t.path)) { warn(`estate.json: distribution target "${t.repo}" path does not exist: ${t.path}`); continue; }
       if (t.path && t.synced) {
         let agents = "";
@@ -84,7 +121,7 @@ function drift(root, warn) {
     const projs = JSON.parse(read(root, "projects/registry.json")).projects;
     for (const a of JSON.parse(read(root, "supply/catalog.json") || '{"assets":[]}').assets) {
       if (!(a.audience in RANK)) warn(`supply/catalog.json: ${a.id} has invalid audience "${a.audience}"`);
-      if (a.status === "supplied" && !a.store && !existsSync(a.source)) warn(`supply/catalog.json: supplied asset ${a.id} source missing`);
+      if (a.status === "supplied" && !a.store && !(skipWindows && isWindowsPath(a.source)) && !existsSync(a.source)) warn(`supply/catalog.json: supplied asset ${a.id} source missing`);
       for (const c of a.consumers ?? []) if (RANK[a.audience] > RANK[projs[c]?.audience ?? "client-safe"]) warn(`supply/catalog.json: ${a.audience} asset ${a.id} consumed by lower-audience repo ${c}`);
     }
   } catch { /* no catalog yet */ }
@@ -92,8 +129,27 @@ function drift(root, warn) {
   // ADR-0054: reference library entries resolve; content hashes are skipped here (lint stays cheap)
   try {
     const lib = loadLibrary(root);
-    for (const p of refProblems(root, lib, { hash: false })) if (p.level === "fail") warn(`references/library.json: ${p.id} — ${p.message}`);
+    for (const p of refProblems(root, lib, { hash: false })) {
+      if (p.level !== "fail") continue;
+      if (skipWindows) {
+        const entry = (lib.entries ?? []).find((e) => e.id === p.id);
+        const pathVal = p.id === "(root)" ? lib.root : entry?.path;
+        if (isWindowsPath(pathVal) && /^(?:library root missing|path missing):/.test(p.message)) continue;
+      }
+      warn(`references/library.json: ${p.id} — ${p.message}`);
+    }
   } catch { /* no library registry yet */ }
+
+  // ADR-0076: guidebook freshness check against CLI commands in src/uika.mjs
+  const guidebook = read(root, "docs/cadenza-commands.md") || read(root, "register/guidebooks/cadenza-commands.md");
+  const uikaSrc = read(root, "src/uika.mjs") || read(root, "tool/src/uika.mjs");
+  if (guidebook && uikaSrc) {
+    for (const cmdName of extractCliCommands(uikaSrc)) {
+      if (!new RegExp("`[^`]*\\b" + cmdName + "\\b", "i").test(guidebook)) {
+        warn(`docs/cadenza-commands.md: missing CLI command "${cmdName}"`);
+      }
+    }
+  }
 
   // ADR-0014 naming: branch shape, handoff handles, model/version slugs in thread titles
   try {
@@ -129,12 +185,26 @@ export async function lint({ root, opts = {} }) {
       warnings.push(`${file}: generated content may have drifted (re-sync to refresh)`);
     }
   }
-  drift(root, (w) => warnings.push(w));
+  drift(root, (w) => warnings.push(w), opts);
   // ADR-0053: the docs standard is checked across every registered distribution target, not only
   // in the estate root (this is where the 14-repo corpus drift becomes visible).
   try {
     for (const f of docsCheck({ root, silent: true }).filter((x) => x.level === "warn")) warnings.push(`docs ${f.repo}: ${f.file}: ${f.message}`);
   } catch { warnings.push("docs: check failed"); }
+  // Manuscriptus ADR check
+  try {
+    const { parseAdrs } = await import("./manuscriptus.mjs");
+    const adrRes = parseAdrs(root);
+    for (const err of adrRes.errors) warnings.push(`manuscriptus ADR: ${err}`);
+  } catch { warnings.push("manuscriptus: check failed"); }
+  // Concise WORKSTACK.md Setlist line budget check (> 120 lines warn)
+  try {
+    const wsText = readFileSync(join(root, "WORKSTACK.md"), "utf8");
+    const wsLines = wsText.split(/\r?\n/).length;
+    if (wsLines > 120) {
+      warnings.push(`WORKSTACK.md: ${wsLines} lines (> 120 concise limit; check WORKSTACK-FULL.md link if present)`);
+    }
+  } catch { /* no workstack */ }
   if (warnings.length === 0) console.log("lint: clean");
   else for (const w of warnings) console.log(`WARN  ${w}`);
   if (opts.strict && warnings.length) throw new Error(`--strict: ${warnings.length} warning(s)`);

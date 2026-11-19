@@ -9,15 +9,15 @@ description: "Human-invoked or pinned Uika task router. Select one engineering p
 
 Enter when human-invoked or pinned by the human. This contract uses portable prose across harnesses. Omit harness-specific invocation keys.
 
-`AGENTS.md` remains the governing law. Read `principles-index.md` at task start. Read applicable principle leaves before applying or citing them. The decision record is ADR-0056 at `register/adr/ADR-0056-uika-mode-router.md` in the Uika repo; read it at that path rather than guessing a filename.
+`AGENTS.md` remains the governing law. Read `principles-index.md` at task start. Read applicable principle leaves before applying or citing them. The decision record is ADR-0056 at `register/adr/ADR-0056-uika-mode-router.md`; read it at that path rather than guessing a filename.
 
-In the Uika repo, resolve router resources under `skills/uika-mode/`. In a placed skill home, resolve `playbooks/` and `principles-index.md` beside this `SKILL.md`. Resolve principle leaves in sibling skill folders.
+In Uika, resolve router resources under `skills/uika-mode/`. In a placed skill home, resolve `playbooks/` and `principles-index.md` beside this `SKILL.md`. Resolve principle leaves in sibling skill folders.
 
 ## 2. Match
 
 Read `playbooks/README.md`. Match task intent and phrase hooks to one playbook. Read that playbook before execution. Default to investigation when intent remains unclear. Playbook files live in `playbooks/` beside this file; the principles index is `principles-index.md` beside this file.
 
-Route an empirical fork to prototype. If running something can settle the choice, observe the result. Do not ask the Manager to predict it.
+Route an empirical fork to prototype. If running something can settle the choice, observe the result. Do not ask the owner to predict it.
 
 For compound tasks, choose the outer playbook and chain required playbooks at their applicable steps. Code-shipping playbooks end by chaining opening-a-pr. Each chain remains subject to the autonomy contract. Planning is not the default for every task.
 
@@ -52,7 +52,7 @@ Pause before an irreversible or protected action unless the session already supp
 
 Never push or rewrite main. Do not execute `uika deploy --apply` or `uika skills place --apply`. Prepare reviewable output for owner application.
 
-Never edit self-governance files. This includes `AGENTS.md` variants, `estate.json`, harness homes, and harness configuration. Propose changes for the owner to apply.
+Never edit estate self-governance files. This includes `AGENTS.md` variants, `estate.json`, harness homes, and harness configuration. Propose changes for the owner to apply.
 
 Keep local credential files unread and untouched. Never read, print, write, or transmit secret values. Refer to keys only by environment-variable name.
 
@@ -88,11 +88,11 @@ Run `skills/wrap-checklist`. Record completed work, remaining work, verification
 
 Respect explicit read-only scope. When writing is forbidden, return the ready-to-record WORKSTACK handoff in the response.
 
-## 8. Skill routing
+## 8. Estate skill routing
 
-Compose these skills when their conditions apply. Resolve skill folders under `skills/` in Uika and as sibling folders in a placed skill home.
+Compose these estate skills when their conditions apply. Resolve estate skill folders under `skills/` in Uika and as sibling folders in a placed skill home.
 
-| Condition | Skill |
+| Condition | Estate skill |
 |---|---|
 | Recent work, dates, project nicknames | find-fast |
 | Session entry and freshness trail | freshness-scan |
@@ -104,3 +104,6 @@ Compose these skills when their conditions apply. Resolve skill folders under `s
 | Creative brief | creative-gates |
 | Programmatic video | video-pipeline plus an applicable theme pack |
 | Generated video verification | video-review |
+| CLI command or design/web lookup | `docs/cadenza-commands.md` and `docs/stageplay-design-and-web.md` |
+| UI interactibility / implicit state audit | `uika unmask check` (`ADR-0075`) |
+| Heavy artifact / Drive temp deferral | `uika ferry status|stage` (`ADR-0074`) |

@@ -33,6 +33,13 @@ Read both files before assigned work. Read the applicable playbook and principle
 
 Missing copy: stop and report; do not run the playbook yourself; the parent owns the todos.
 
+## Masquerade squad defaults (ADR-0075)
+
+When running multi-agent work, assign roles by quota cost and read/write scope:
+- **Orchestrator / Manager**: owns the plan, verifies diffs, and runs final checks. Use the lightest capable manager tier for coordination.
+- **Workhorse / Auditor**: handles focused code audits or verification against explicit acceptance criteria.
+- **Workers / Scouts**: read-only surveys or bounded disjoint file writes at the lightest worker tier (`15`-turn default cap). Workers must never spawn nested subagents.
+
 ## Effort scaling (bake these into orchestrator prompts)
 
 | Task type | Subagents | Calls each |
