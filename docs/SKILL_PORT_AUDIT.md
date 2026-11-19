@@ -1,7 +1,7 @@
 # Skills scope and provenance
 
-The source preview contains **39 estate-authored skills** in `skills/`: the original 17
-operating/principle skills plus 22 ports. Each folder has a `SKILL.md`; some also contain
+The source preview contains **40 estate-authored skills** in `skills/`: the original 17
+operating/principle skills plus 23 ports. Each folder has a `SKILL.md`; some also contain
 manuals, reference material, examples, schemas, or helper kits. The package includes the
 skills tree and this document.
 
@@ -18,12 +18,12 @@ principle-encode-lessons-in-structure, principle-guard-the-context-window,
 principle-laziness-protocol, principle-never-block-on-the-human, principle-prove-it-works,
 script-hygiene, shell-safe-writes, toolchains, wrap-checklist.
 
-## Additional ports (22)
+## Additional ports (23)
 
 copy-craft, creative-gates, document-craft, estate-sync, eval-hillclimb, explainer,
-figure-craft, keynote-launch, mql5-review, prompt-library, retro-pixel, setup-uika-models,
-supply-layer, theme-craft, tower-bridge, uika-help, uika-mode, video-direction,
-video-pipeline, video-prompt, video-review, visual-direction.
+figure-craft, keynote-launch, mql5-review, plain-prose, prompt-library, retro-pixel,
+setup-uika-models, supply-layer, theme-craft, tower-bridge, uika-help, uika-mode,
+video-direction, video-pipeline, video-prompt, video-review, visual-direction.
 
 Six ports are workflow templates: `estate-sync`, `mql5-review`, `prompt-library`,
 `setup-uika-models`, `supply-layer`, and `tower-bridge`. Their `MANUAL.md` files explain

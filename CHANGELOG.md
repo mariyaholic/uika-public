@@ -9,11 +9,24 @@ law-block format and harness mappings may change in any minor release.
 
 ### Added
 
-- **Skills library.** 22 ports join the original 17 skills, for 39 estate-authored skills,
-  including video, figure, explainer and creative-gates packs. Six ports are workflow
+- **Skills library.** 23 ports join the original 17 skills, for 40 estate-authored skills,
+  including `plain-prose`, video, figure, explainer and creative-gates packs. Six ports are workflow
   templates with setup manuals. The whole `skills/` tree is included in local npm packs;
   [skills scope and provenance](docs/SKILL_PORT_AUDIT.md) describes the library and its limits.
   Third-party skills are not vendored, as stated in [NOTICE](NOTICE).
+- **`uika manuscriptus`** — `check` and `next [--scan-refs]` for ADR numbering, reserved range
+  checks, plain-prose lint across ADRs and guidebooks, and relative link checks.
+- **`uika encore`** — `list`, `summary`, `lint`, `ingest`, `push`, and `pull-github` for
+  Structured Incident Memory (SIM) entries in `register/LEARNINGS.md` (cloud sync requires
+  explicit `--repo` / `--owner` / `--repos` or environment configuration).
+- **`uika aurora`** — `sync` and `propagate` for estate target/skill/home drift detection and
+  cross-repo Setlist/SIM/law propagation (GitHub discovery requires `--owner` or `--repos`).
+- **`uika ferry`** — `status`, `plan`, `stage`, and `restore` for heavy temp/cache artifact
+  deferral with SHA-256 verification and optional `gdrive` upload hook.
+- **`uika unmask`** — `check [dir] [--json] [--include-vendor]` for UI interactibility and
+  implicit state-machine checks (inert buttons, `href="#"`, `pointer-events: none` traps,
+  unguarded async listeners, missing `:focus-visible` and `prefers-reduced-motion`).
+- **Public guidebooks.** Added `docs/cadenza-commands.md` and `docs/stageplay-design-and-web.md`.
 - **`uika video`** — `ls` (breadth-first film finder), `qa` (decode, duration, loudness, true peak,
   silence and twin checks; exits 1 on any FAIL), `sheet` and `frame` (contact sheet and single
   frames), `structure` (cut-rhythm profile, `uika.video-structure.v1`), `diff` (two-axis clone
@@ -28,6 +41,11 @@ law-block format and harness mappings may change in any minor release.
 
 ### Fixed
 
+- `README.md` uses relative links to packaged documentation instead of personal site URLs so
+  `npm run scrub` passes cleanly across both source tree and packed tarball.
+- `lint` supports `--strict-paths` (skipping Windows drive paths on non-Windows by default) and
+  checks the `WORKSTACK.md` 120-line Setlist budget plus Manuscriptus ADR validation.
+- Dispatcher propagates `res.ok === false` with exit code 1 and registers all 24 commands.
 - CLI help exits successfully, malformed arguments have concise errors, and conflicting
   `--apply`/`--dry-run` flags fail before any writes.
 - Skill distribution includes helper/playbook changes and rejects links within copied trees.

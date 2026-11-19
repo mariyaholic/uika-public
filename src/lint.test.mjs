@@ -81,3 +81,46 @@ test("lint checks real branch names only: a detached HEAD (CI checkouts) is not 
   assert.match(bad.stdout, /branch "Not_Kebab" breaks/);
   assert.doesNotMatch(bad.stdout, /HEAD detached/);
 });
+
+test("isWindowsPath and extractCliCommands helpers work as expected", async () => {
+  const { isWindowsPath, extractCliCommands } = await import("./lint.mjs");
+  assert.equal(isWindowsPath("C:/Users/x/repo"), true);
+  assert.equal(isWindowsPath("d:\\path\\to"), true);
+  assert.equal(isWindowsPath("/tmp/repo"), false);
+  assert.equal(isWindowsPath(null), false);
+
+  const cmds = extractCliCommands("const commands = { check, lint, eval: evalCmd, unmask };");
+  assert.deepEqual(cmds, ["check", "lint", "eval", "unmask"]);
+});
+
+test("lint skips Windows paths on non-Windows unless --strict-paths and warns on WORKSTACK > 120 lines", async (t) => {
+  const tmp = mkdtempSync(join(tmpdir(), "uika-lint-setlist-"));
+  t.after(() => rmSync(tmp, { recursive: true, force: true }));
+  mkdirSync(join(tmp, "projects"), { recursive: true });
+  writeFileSync(join(tmp, "estate.json"), JSON.stringify({ estate: { distribution: { targets: [] } } }), "utf8");
+  writeFileSync(join(tmp, "projects/registry.json"), JSON.stringify({ projects: { winproj: { paths: ["C:/Windows/Path"] } } }), "utf8");
+  const wsLines = ["From→To: claude.impl → codex.judge", ...Array.from({ length: 125 }, (_, i) => `- item ${i}`)];
+  writeFileSync(join(tmp, "WORKSTACK.md"), wsLines.join("\n"), "utf8");
+
+  const logs = [];
+  const orig = console.log;
+  console.log = (...a) => logs.push(a.join(" "));
+  try {
+    await lint({ root: tmp, opts: {} });
+  } finally {
+    console.log = orig;
+  }
+  if (process.platform !== "win32") {
+    assert.ok(!logs.some((l) => l.includes("C:/Windows/Path")));
+  }
+  assert.ok(logs.some((l) => l.includes("WORKSTACK.md:") && l.includes("120 concise limit")));
+
+  const strictLogs = [];
+  console.log = (...a) => strictLogs.push(a.join(" "));
+  try {
+    await lint({ root: tmp, opts: { "strict-paths": true } });
+  } finally {
+    console.log = orig;
+  }
+  assert.ok(strictLogs.some((l) => l.includes("C:/Windows/Path")));
+});

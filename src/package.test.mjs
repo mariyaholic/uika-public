@@ -16,11 +16,11 @@ const walkFiles = (rel) => readdirSync(join(root, rel), { withFileTypes: true })
   return e.isDirectory() ? walkFiles(r) : [r];
 });
 const SKILL_FILES = walkFiles("skills");
-const MODULES = ["adopt", "check", "deploy", "docs", "eval", "figure", "find", "home", "init", "layout", "lint", "ref", "session", "skills", "supply", "sync", "targets", "uika", "video"];
+const MODULES = ["adopt", "aurora", "check", "deploy", "docs", "encore", "eval", "ferry", "figure", "find", "home", "init", "layout", "lint", "manuscriptus", "ref", "session", "skills", "supply", "sync", "targets", "uika", "unmask", "video"];
 export const EXPECTED_FILES = [
   "CHANGELOG.md", "CONTRIBUTING.md", "LICENSE", "NOTICE", "README.md", "ROADMAP.md", "SECURITY.md", "package.json",
   "bin/uika.mjs",
-  "docs/AGENT-GUIDE.md", "docs/SKILL_PORT_AUDIT.md", "docs/harness-matrix.md", "docs/manual.md", "docs/roadmap.md",
+  "docs/AGENT-GUIDE.md", "docs/SKILL_PORT_AUDIT.md", "docs/cadenza-commands.md", "docs/harness-matrix.md", "docs/manual.md", "docs/roadmap.md", "docs/stageplay-design-and-web.md",
   "examples/estate.example.json", "examples/mcp.example.json", "examples/projects.example.json",
   "schema/estate.schema.json",
   ...SKILL_FILES,
@@ -76,11 +76,18 @@ test("README command count and help text agree with the dispatcher", () => {
   const src = readFileSync(join(root, "src/uika.mjs"), "utf8");
   const names = src.match(/const commands = \{([^}]*)\}/)[1].split(",").map((s) => s.trim().split(":")[0].trim()).filter(Boolean);
   const readme = readFileSync(join(root, "README.md"), "utf8");
+  const manual = readFileSync(join(root, "docs/manual.md"), "utf8");
+  const guidebook = readFileSync(join(root, "docs/cadenza-commands.md"), "utf8");
   const n = Number(readme.match(/The dispatcher registers (\d+) commands/)[1]);
   assert.equal(n, names.length, `README says ${n}, dispatcher registers ${names.length}`);
+  assert.equal(names.length, 24, `expected 24 commands, got ${names.length}`);
   const help = src.slice(src.indexOf("console.log(`uika <command>"));
-  for (const c of names) assert.match(help, new RegExp(`\\n\\s+${c} |\\| ${c} `), `help lists ${c}`);
-  for (const c of names) assert.ok(readme.includes(`\`${c}`), `README mentions ${c}`);
+  for (const c of names) {
+    assert.match(help, new RegExp(`\\n\\s+${c} |\\| ${c} `), `help lists ${c}`);
+    assert.ok(readme.includes(`\`${c}`), `README mentions ${c}`);
+    assert.match(manual, new RegExp(`\\b${c}\\b`), `docs/manual.md mentions ${c}`);
+    assert.match(guidebook, new RegExp(`\`[^\`]*\\b${c}\\b`), `docs/cadenza-commands.md mentions ${c}`);
+  }
 });
 
 test("repository envelope: LF everywhere, generated state ignored, release docs present", () => {
