@@ -4,8 +4,8 @@ Use this maintainer checklist for a source preview or package release. Record th
 revision, commands, exit codes, test results, CI links, and artifact hashes in the release
 record. This checklist is kept in the repository and is not included in the npm package.
 
-Source publication and npm publication are separate decisions. The 0.1.0 npm package is
-currently unpublished.
+Source publication and npm publication are separate decisions. The npm package `uika` is
+published from 0.1.1; 0.1.0 was a source-only preview.
 
 ## Source review
 

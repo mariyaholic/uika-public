@@ -2,7 +2,7 @@
 
 See the root [ROADMAP.md](../ROADMAP.md) for the full roadmap.
 
-**Release state: `0.1.0 source preview`, installable from GitHub with `npm install -g github:mariyaholic/uika-public`; npm registry package unpublished.** The source is
+**Release state: `0.1.1 preview`, published on npm as `uika` (`npm install -g uika`).** The source is
 public in this repository. Source publication and npm distribution are
 separate steps. APIs, manifest fields, and harness mappings may change before 1.0.
 

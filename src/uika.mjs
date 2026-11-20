@@ -1,4 +1,4 @@
-// uika.mjs — dispatcher (0.1.0 preview).
+// uika.mjs — dispatcher (0.1.1 preview).
 // Commands: init | check | lint | sync | skills | audit | find | where | path | layout | session | adopt | deploy | docs | home
 //           | video | figure | ref | eval | manuscriptus | encore | aurora | ferry | unmask
 //
@@ -96,7 +96,7 @@ if (values.apply && values["dry-run"]) {
 }
 if (!run || values.help) {
   if (cmd && !run && !values.help) console.error(`uika: unknown command "${cmd}"`);
-  console.log(`uika <command>  (0.1.0 preview — run inside an estate directory, or pass --root <dir> / set UIKA_ESTATE_HOME)
+  console.log(`uika <command>  (0.1.1 preview — run inside an estate directory, or pass --root <dir> / set UIKA_ESTATE_HOME)
   init [dir] [--name n] [--apply] — bootstrap a compliant new estate from scratch
   check — machine probe: runtimes, harness homes, drive space
   lint [--strict] [--strict-paths] — context-budget linter: always-loaded file lines, law-block drift, skill hygiene (advisory; --strict exits 1 on any warning)
