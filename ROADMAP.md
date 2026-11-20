@@ -1,7 +1,7 @@
 # Uika Open Source Roadmap
 
-**Release state: `0.1.0 source preview`; npm package unpublished.** This tree is being
-prepared for a clean public source repository. Publishing the source and publishing an npm
+**Release state: `0.1.0 source preview`, installable from GitHub with `npm install -g github:mariyaholic/uika-public`; npm registry package unpublished.** The source is
+public in this repository. Publishing the source and publishing an npm
 package are separate milestones. Until 1.0, the CLI surface, manifest fields, law-block format,
 and harness mappings may change without a deprecation period.
 

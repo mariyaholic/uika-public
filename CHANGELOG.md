@@ -39,6 +39,12 @@ law-block format and harness mappings may change in any minor release.
   a keep/revert verdict. uika runs only the commands in your task files and calls no model API.
 - Every new command that writes is a dry run unless you pass `--apply`.
 
+### Changed
+
+- `README.md` installs from GitHub with `npm install -g github:mariyaholic/uika-public` (or
+  `npx github:mariyaholic/uika-public` for one run), so `uika` is on your PATH without a clone.
+  Running from a clone stays documented as an alternative.
+
 ### Fixed
 
 - `README.md` uses relative links to packaged documentation instead of personal site URLs so

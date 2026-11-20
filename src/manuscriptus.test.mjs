@@ -4,7 +4,7 @@ import assert from "node:assert";
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { parseAdrs, getNextAdrNumber, lintPlainProse, lintGuidebooksProse, manuscriptus } from "./manuscriptus.mjs";
 
 test("manuscriptus parses valid ADRs and calculates next number", () => {
@@ -69,28 +69,33 @@ test("lintGuidebooksProse checks docs and register/guidebooks", () => {
 test("getNextAdrNumber with scanRefs discovers unmerged branch ADRs", () => {
   const tmp = mkdtempSync(join(tmpdir(), "uika-manuscriptus-git-"));
   try {
-    execSync("git init", { cwd: tmp, stdio: "ignore" });
-    execSync("git config user.name 'Test'", { cwd: tmp, stdio: "ignore" });
-    execSync("git config user.email 'test@example.com'", { cwd: tmp, stdio: "ignore" });
+    // execFileSync passes each argument as-is, so no shell quoting is involved and the test
+    // behaves the same under cmd.exe on Windows and sh elsewhere.
+    const git = (...args) => execFileSync("git", args, { cwd: tmp, stdio: "ignore" });
+    git("init");
+    git("config", "user.name", "Test");
+    git("config", "user.email", "test@example.com");
     writeFileSync(join(tmp, "README.md"), "# Init\n", "utf8");
-    execSync("git add README.md && git commit -m 'init'", { cwd: tmp, stdio: "ignore" });
+    git("add", "README.md");
+    git("commit", "-m", "init");
 
-    execSync("git checkout -b feature/adr-80", { cwd: tmp, stdio: "ignore" });
+    git("checkout", "-b", "feature/adr-80");
     const adrDir = join(tmp, "register/adr");
     mkdirSync(adrDir, { recursive: true });
     writeFileSync(
       join(adrDir, "ADR-0080-branch.md"),
       "# ADR-0080: Branch ADR\n\nDate: 2026-11-18 · Status: proposed\n\n## Context\nC\n\n## Decision\nD\n\n## Consequences\nC\n"
     );
-    execSync("git add register/adr/ADR-0080-branch.md && git commit -m 'add 80'", { cwd: tmp, stdio: "ignore" });
+    git("add", "register/adr/ADR-0080-branch.md");
+    git("commit", "-m", "add 80");
 
     try {
-      execSync("git checkout main", { cwd: tmp, stdio: "ignore" });
+      git("checkout", "main");
     } catch {
       try {
-        execSync("git checkout master", { cwd: tmp, stdio: "ignore" });
+        git("checkout", "master");
       } catch {
-        execSync("git checkout -b main", { cwd: tmp, stdio: "ignore" });
+        git("checkout", "-b", "main");
       }
     }
 
