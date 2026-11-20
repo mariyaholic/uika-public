@@ -2,8 +2,8 @@
 
 See the root [ROADMAP.md](../ROADMAP.md) for the full roadmap.
 
-**Release state: `0.1.0 source preview`; npm package unpublished.** This tree is being
-prepared for a clean public source repository. Source publication and npm distribution are
+**Release state: `0.1.0 source preview`, installable from GitHub with `npm install -g github:mariyaholic/uika-public`; npm registry package unpublished.** The source is
+public in this repository. Source publication and npm distribution are
 separate steps. APIs, manifest fields, and harness mappings may change before 1.0.
 
 1. **Present in this tree:** the 24-command estate CLI, fingerprinted law blocks, docs and

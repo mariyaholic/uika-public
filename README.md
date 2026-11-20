@@ -4,28 +4,44 @@ This is my **estate layer for AI coding agents**: one lawbook, generated adapter
 
 Uika makes the agent-facing layer generated, versioned, fingerprinted, and drift-audited instead of hand-copied. A law block goes into every managed repo, skills land in each harness's skill home, and every session starts with a freshness scan and ends with a handoff. [The core ideas](docs/manual.md#part-1--the-estate-model) live in the manual.
 
-**Status: `0.1.0 source preview`; npm package unpublished.** This checkout is the source
-preview. Source: [source repository](https://github.com/mariyaholic/uika-public).
-Source publication and an npm release are separate steps.
-APIs, `estate.json` manifest fields, the law-block format, and harness mappings may change
-before 1.0.
+**Status: `0.1.0 source preview`.** It installs from this GitHub repository. The npm
+registry package is not published yet. APIs, `estate.json` manifest fields, the law-block
+format, and harness mappings may change before 1.0.
 
 ## Install
 
-uika runs on Node.js 22 or later and uses Node built-ins only — no npm dependencies. The
-npm package is not published, so `npm i -g uika` and `npx uika` are not ways in. Run it from
-this source tree:
+You need [Node.js](https://nodejs.org) 22 or later and [Git](https://git-scm.com). Then run:
 
 ```sh
-node bin/uika.mjs check          # machine probe: runtimes, harness homes, drives
+npm install -g github:mariyaholic/uika-public
+uika check                       # machine probe: runtimes, harness homes, drives
 ```
 
-To put `uika` on your PATH, build and install a tarball:
+npm downloads the source from GitHub and puts `uika` on your PATH. uika uses Node built-ins
+only, so it installs no other packages. Run the same install command again to update, and
+`npm uninstall -g uika` to remove it.
+
+To try it once without installing:
 
 ```sh
-npm pack                         # writes uika-0.1.0.tgz
-npm install -g ./uika-0.1.0.tgz
+npx github:mariyaholic/uika-public check
 ```
+
+`npm install -g uika` does not work yet, because the package is not on the npm registry.
+
+<details>
+<summary>Run from a clone instead</summary>
+
+```sh
+git clone https://github.com/mariyaholic/uika-public
+cd uika-public
+node bin/uika.mjs check
+```
+
+Use `node bin/uika.mjs <command>` wherever this README says `uika <command>`, or run
+`npm install -g .` inside the clone to put that checkout on your PATH.
+
+</details>
 
 ## Get started
 
@@ -33,14 +49,16 @@ uika works on an **estate directory**: a folder with your `estate.json`, your ru
 skills. Make one and check it:
 
 ```sh
-node bin/uika.mjs init my-estate --apply
-cd my-estate && node ../bin/uika.mjs lint
+uika init my-estate --apply
+cd my-estate
+uika lint
 ```
 
-The bootstrap makes a scaffold but does not copy the bundled skills. Read them in the
-checkout, choose the ones you want, then copy and validate them. My own small operating set,
-and the full recipe, are in [the manual](docs/manual.md#part-2--running-the-tool)
-and [the agent guide](docs/AGENT-GUIDE.md). Commands that write files are dry runs until you pass `--apply`.
+The bootstrap makes a scaffold but does not copy the bundled skills. Read them in
+[`skills/`](skills/), choose the ones you want, then copy and validate them. My own small
+operating set, and the full recipe, are in [the manual](docs/manual.md#part-2--running-the-tool)
+and [the agent guide](docs/AGENT-GUIDE.md). Commands that write files are dry runs until you
+pass `--apply`.
 
 To keep the tool public and the estate private, point uika at your own directory with
 `UIKA_ESTATE_HOME` or `--root`. The tool carries no personal data, and your estate stays
