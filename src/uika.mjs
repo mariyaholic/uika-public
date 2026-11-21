@@ -101,7 +101,8 @@ if (!run || values.help) {
   check — machine probe: runtimes, harness homes, drive space
   lint [--strict] [--strict-paths] — context-budget linter: always-loaded file lines, law-block drift, skill hygiene (advisory; --strict exits 1 on any warning)
   sync <repo> [--force] [--apply] — distribute estate config into a clean target repo (ADR-0003 pattern)
-  skills validate|place [--apply] | audit [repo] [--deep] — skill tiers into harness homes (ADR-0015 pattern)
+  skills validate|place [--apply] — skill tiers into harness homes (ADR-0015 pattern)
+  audit [repo] — report variant-suffixed script clusters (skills/script-hygiene)
   find [words] [--project p] [--since 3h|2d|yesterday|YYYY-MM-DD] [--on date] [--ext md] [--n 15] | where [name] — estate search & nickname resolution (ADR-0019 pattern)
   path <kind> <name> [--project p] [--from handle] [--apply] | layout [dir] — where a file goes (ADR-0022 pattern)
   session check [repo] [--stop] — freshness scan + WORKSTACK handoff + wrap gate (session protocol)
