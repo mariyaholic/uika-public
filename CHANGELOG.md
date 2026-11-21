@@ -7,6 +7,21 @@ law-block format and harness mappings may change in any minor release.
 
 ## [Unreleased]
 
+## [0.1.1] preview - 2026-11-20
+
+The first release on the npm registry. The code is the same as 0.1.0.
+
+### Changed
+
+- `README.md` installs with `npm install -g uika`, offers `npx uika` for a single run, and keeps
+  the GitHub install for the newest source. Both roadmaps and the release checklist state that
+  the package is published.
+- The CLI help names the 0.1.1 preview.
+
+## [0.1.0] source preview - 2026-11-20
+
+Tagged `v0.1.0` on GitHub. Not published to npm.
+
 ### Added
 
 - **Skills library.** 23 ports join the original 17 skills, for 40 estate-authored skills,
@@ -71,10 +86,9 @@ law-block format and harness mappings may change in any minor release.
 - `deploy`: the auto-adopt guards compare symlink-resolved paths, so an estate reached through a
   Windows junction or a symlinked home folder is recognised.
 
-## [0.1.0] preview (unpublished)
+## 0.1.0 groundwork (never tagged)
 
-The initial source preview. The npm package is unpublished; source publication is a
-separate step.
+The first internal source preview, folded into the tagged 0.1.0 above.
 
 ### Scope
 

@@ -4,30 +4,32 @@ This is my **estate layer for AI coding agents**: one lawbook, generated adapter
 
 Uika makes the agent-facing layer generated, versioned, fingerprinted, and drift-audited instead of hand-copied. A law block goes into every managed repo, skills land in each harness's skill home, and every session starts with a freshness scan and ends with a handoff. [The core ideas](docs/manual.md#part-1--the-estate-model) live in the manual.
 
-**Status: `0.1.0 source preview`.** It installs from this GitHub repository. The npm
-registry package is not published yet. APIs, `estate.json` manifest fields, the law-block
-format, and harness mappings may change before 1.0.
+**Status: `0.1.1 preview`.** APIs, `estate.json` manifest fields, the law-block format, and
+harness mappings may change before 1.0.
 
 ## Install
 
-You need [Node.js](https://nodejs.org) 22 or later and [Git](https://git-scm.com). Then run:
+You need [Node.js](https://nodejs.org) 22 or later. Then run:
 
 ```sh
-npm install -g github:mariyaholic/uika-public
+npm install -g uika
 uika check                       # machine probe: runtimes, harness homes, drives
 ```
 
-npm downloads the source from GitHub and puts `uika` on your PATH. uika uses Node built-ins
-only, so it installs no other packages. Run the same install command again to update, and
-`npm uninstall -g uika` to remove it.
+uika uses Node built-ins only, so it installs no other packages. Run `npm install -g uika@latest`
+to update, and `npm uninstall -g uika` to remove it.
 
 To try it once without installing:
 
 ```sh
-npx github:mariyaholic/uika-public check
+npx uika check
 ```
 
-`npm install -g uika` does not work yet, because the package is not on the npm registry.
+To install the newest source from GitHub instead, which also needs [Git](https://git-scm.com):
+
+```sh
+npm install -g github:mariyaholic/uika-public
+```
 
 <details>
 <summary>Run from a clone instead</summary>
