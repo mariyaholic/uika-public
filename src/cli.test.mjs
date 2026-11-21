@@ -21,6 +21,16 @@ test("CLI dispatcher gives explicit --root precedence over UIKA_ESTATE_HOME", (t
   assert.ok(!run.stdout.includes(other));
 });
 
+test("CLI help lists every bundled command", () => {
+  const cli = join(dirname(fileURLToPath(import.meta.url)), "..", "bin", "uika.mjs");
+  const help = spawnSync(process.execPath, [cli, "--help"], { encoding: "utf8" });
+  assert.equal(help.status, 0, help.stderr);
+  const commands = ["init", "check", "lint", "sync", "skills", "audit", "find", "where", "path", "layout", "session", "adopt", "deploy", "docs", "home", "video", "figure", "ref", "eval", "manuscriptus", "encore", "aurora", "ferry", "unmask"];
+  for (const name of commands) {
+    assert.match(help.stdout, new RegExp(`(^\\s*|\\| )${name}\\b`, "m"), `help does not list "${name}"`);
+  }
+});
+
 test("CLI help succeeds and malformed arguments fail without a stack trace", () => {
   const cli = join(dirname(fileURLToPath(import.meta.url)), "..", "bin", "uika.mjs");
   const run = (...args) => spawnSync(process.execPath, [cli, ...args], { encoding: "utf8" });
