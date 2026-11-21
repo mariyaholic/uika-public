@@ -51,6 +51,26 @@ Consequences.
   assert.ok(warnings.some((w) => w.includes("significance")));
 });
 
+test("lintPlainProse exempts every heading level and table rows from the em-dash warning", () => {
+  const content = [
+    "# h1 — separator",
+    "",
+    "## h2 — separator",
+    "",
+    "### h3 — separator",
+    "",
+    "| col | col |",
+    "|---|---|",
+    "| a | — |",
+    "",
+    "Prose here — with a dash."
+  ].join("\n");
+
+  const warnings = lintPlainProse(content, "docs/guide.md").filter((w) => w.includes("em-dash"));
+  assert.strictEqual(warnings.length, 1, warnings.join("\n"));
+  assert.match(warnings[0], /:11:/);
+});
+
 test("lintGuidebooksProse checks docs and register/guidebooks", () => {
   const tmp = mkdtempSync(join(tmpdir(), "uika-manuscriptus-guides-"));
   try {

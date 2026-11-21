@@ -24,7 +24,9 @@ export function lintPlainProse(content, filename) {
     const line = lines[i];
     const lineNum = i + 1;
 
-    if (!/^#\s+/.test(line) && /—/.test(line)) {
+    // Headings at any level and table rows are not prose. An em-dash in a heading is a
+    // separator, and a dash in a table cell marks an empty value.
+    if (!/^#{1,6}\s/.test(line) && !/^\s*\|/.test(line) && /—/.test(line)) {
       warnings.push(`${filename}:${lineNum}: ADR-0062 warning: em-dash ('—') used`);
     }
 
