@@ -13,7 +13,9 @@ The first release on the npm registry. The code is the same as 0.1.0.
 
 ### Changed
 
-- `README.md` installs with `npm install -g uika`, offers `npx uika` for a single run, and keeps
+- The npm package is `@mariyaholic/uika`, because npm rejects the unscoped name `uika` as too
+  similar to existing packages. The installed command is still `uika`.
+- `README.md` installs with `npm install -g @mariyaholic/uika`, offers `npx @mariyaholic/uika` for a single run, and keeps
   the GitHub install for the newest source. Both roadmaps and the release checklist state that
   the package is published.
 - The CLI help names the 0.1.1 preview.

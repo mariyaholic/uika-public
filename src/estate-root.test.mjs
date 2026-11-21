@@ -50,7 +50,8 @@ test("installed CLI uses explicit, environment, then current-directory estate ro
   const tarball = join(packDir, packed[0].filename);
   npm(["install", "--offline", "--no-audit", "--no-fund", "--prefix", prefix, tarball], scratch);
 
-  const installedCli = join(prefix, "node_modules", "uika", "bin", "uika.mjs");
+  // The install path follows the package name, which is scoped (node_modules/@scope/name).
+  const installedCli = join(prefix, "node_modules", ...packed[0].name.split("/"), "bin", "uika.mjs");
   const envTarget = join(scratch, "env-target");
   const explicitTarget = join(scratch, "explicit-target");
   const cwdTarget = join(scratch, "cwd-target");
@@ -115,7 +116,7 @@ test("installed CLI uses explicit, environment, then current-directory estate ro
   run(["lint", "--root", join(scratch, "does-not-exist")], scratch, undefined);
 
   // CLI-only package: importing it is rejected by metadata and never runs the CLI.
-  const imported = spawnSync(process.execPath, ["--input-type=module", "-e", 'await import("uika")'], { cwd: prefix, encoding: "utf8" });
+  const imported = spawnSync(process.execPath, ["--input-type=module", "-e", `await import(${JSON.stringify(packed[0].name)})`], { cwd: prefix, encoding: "utf8" });
   assert.notEqual(imported.status, 0);
   assert.match(imported.stderr, /ERR_PACKAGE_PATH_NOT_EXPORTED/);
   assert.equal(imported.stdout, "", "importing the package must not print CLI usage");

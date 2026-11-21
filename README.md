@@ -12,17 +12,19 @@ harness mappings may change before 1.0.
 You need [Node.js](https://nodejs.org) 22 or later. Then run:
 
 ```sh
-npm install -g uika
+npm install -g @mariyaholic/uika
 uika check                       # machine probe: runtimes, harness homes, drives
 ```
 
-uika uses Node built-ins only, so it installs no other packages. Run `npm install -g uika@latest`
-to update, and `npm uninstall -g uika` to remove it.
+The command is `uika`. npm blocks the unscoped name `uika` as too similar to other packages, so the
+package is published under my scope. uika uses Node built-ins only, so it installs no other
+packages. Run `npm install -g @mariyaholic/uika@latest` to update, and
+`npm uninstall -g @mariyaholic/uika` to remove it.
 
 To try it once without installing:
 
 ```sh
-npx uika check
+npx @mariyaholic/uika check
 ```
 
 To install the newest source from GitHub instead, which also needs [Git](https://git-scm.com):

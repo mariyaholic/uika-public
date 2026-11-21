@@ -1,6 +1,6 @@
 # Uika Open Source Roadmap
 
-**Release state: `0.1.1 preview`, published on npm as `uika` (`npm install -g uika`).** The source is
+**Release state: `0.1.1 preview`, published on npm as `@mariyaholic/uika` (`npm install -g @mariyaholic/uika`).** The source is
 public in this repository. Publishing the source and publishing an npm
 package are separate milestones. Until 1.0, the CLI surface, manifest fields, law-block format,
 and harness mappings may change without a deprecation period.
